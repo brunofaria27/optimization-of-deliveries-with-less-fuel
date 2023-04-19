@@ -1,20 +1,25 @@
 import PySimpleGUI as sg
 
+sg.theme('LightGray1') 
 layout = [
-    [sg.Text("Pegar Cotação da Moeda")],
-    [sg.InputText(key="nome_cotacao")],
-    [sg.Button("Pegar Cotação"), sg.Button("Cancelar")],
-    [sg.Text("", key="texto_cotacao")],
+    [sg.Text("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS")],
+    [sg.Button("FORÇA BRUTA")],
+    [sg.Button("BRANCH-AND-BOUND")],
 ]
 
-janela = sg.Window("Sistema de Cotações", layout)
+janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout)
 
 while True:
     evento, valores = janela.read()
     if evento == sg.WIN_CLOSED or evento == "Cancelar":
         break
-    if evento == "Pegar Cotação":
-
-        janela["texto_cotacao"].update(f"A cotação do ")
+    if evento == "FORÇA BRUTA":
+        print();
+        # import src.forcaBruta as forcaBruta
+        # forcaBruta.main()
+    if evento == "BRANCH AND BOUND":
+        print();
+        # import src.branchAndBound as branchAndBound   
+        # branchAndBound.main()
 
 janela.close()
