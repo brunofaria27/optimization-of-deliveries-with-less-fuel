@@ -2,14 +2,16 @@ import PySimpleGUI as sg
 
 sg.theme('LightGray1') 
 layout = [
-    [sg.Text("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS")],
-    [sg.Text("-----------------------------------------------------------------------------")],
-    [[sg.Text("ESCOLHA ARQUIVO DE ENTRADA: "), sg.FileBrowse("ESCOLHER")]],
-    [sg.Button("FORÇA BRUTA")],
-    [sg.Button("BRANCH-AND-BOUND")],
+    [sg.Text("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", size=(90, 1), justification='center', font=("Helvetica", 15))],
+        [sg.Text("Bruno Faria, Lucas de Paula, Maria Luísa Tomich Raso", size=(90, 1), justification='center', font=("Helvetica", 15))],
+    [sg.Text("-----------------------------------------------------------------------------", size=(90, 1), justification='center', font=("Helvetica", 15))],
+    [sg.Text(" ", size=(90, 1), justification='center', font=("Helvetica", 15))],
+    [[sg.Text("ESCOLHA ARQUIVO DE ENTRADA: ", font=("Helvetica", 15)), sg.FileBrowse("ESCOLHER", font=("Helvetica", 15))]],
+    [sg.Button("FORÇA BRUTA", font=("Helvetica", 15))],
+    [sg.Button("BRANCH-AND-BOUND", font=("Helvetica", 15))],
 ]
 
-janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout, size=(500, 200))
+janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout, size=(900, 300))
 
 while True:
     evento, valores = janela.read()
