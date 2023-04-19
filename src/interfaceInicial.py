@@ -14,11 +14,11 @@ while True:
     if evento == sg.WIN_CLOSED or evento == "Cancelar":
         break
     if evento == "FORÇA BRUTA":
-        print();
+        print()
         # import src.forcaBruta as forcaBruta
         # forcaBruta.main()
     if evento == "BRANCH AND BOUND":
-        print();
+        print()
         # import src.branchAndBound as branchAndBound   
         # branchAndBound.main()
 

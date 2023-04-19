@@ -7,15 +7,7 @@ import PySimpleGUI as sg # Importar o módulo PySimpleGUI para o GUI
 
 import src.interfaceInicial as interfaceInicial # Importar o módulo próprio do GUI
 
-layout = [
-    
-    [sg.Text('Escolha uma opção:')],
-
-    [sg.Button('MENU INICIAL', key='interfaceInicial', size=(76, 1))],
-
-    [sg.Button('SAIR', key="exit", size=(76, 1))],
-
-]
+layout = [ ]
 
 def main():
 
