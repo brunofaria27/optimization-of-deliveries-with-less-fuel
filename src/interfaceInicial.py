@@ -3,11 +3,13 @@ import PySimpleGUI as sg
 sg.theme('LightGray1') 
 layout = [
     [sg.Text("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS")],
+    [sg.Text("-----------------------------------------------------------------------------")],
+    [[sg.Text("ESCOLHA ARQUIVO DE ENTRADA: "), sg.FileBrowse("ESCOLHER")]],
     [sg.Button("FORÇA BRUTA")],
     [sg.Button("BRANCH-AND-BOUND")],
 ]
 
-janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout)
+janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout, size=(500, 200))
 
 while True:
     evento, valores = janela.read()
