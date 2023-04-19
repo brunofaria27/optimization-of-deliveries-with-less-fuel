@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 
 sg.theme('LightGray1') 
 layout = [
-    [sg.Text("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", size=(90, 1), justification='center', font=("Helvetica", 15))],
+    [sg.Text("OTIMIZAÇÃO DE ENTREGAS", size=(90, 1), justification='center', font=("Helvetica", 15))],
         [sg.Text("Bruno Faria, Lucas de Paula, Maria Luísa Tomich Raso", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [sg.Text("-----------------------------------------------------------------------------", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [sg.Text(" ", size=(90, 1), justification='center', font=("Helvetica", 15))],
@@ -10,7 +10,7 @@ layout = [
     [[sg.Text("ESCOLHA UM DOS ALGORÍTMOS: ", font=("Helvetica", 15)), sg.Button("FORÇA BRUTA", font=("Helvetica", 15)), sg.Button("BRANCH-AND-BOUND", font=("Helvetica", 15))]],
 ]
 
-janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout, size=(600, 250), text_justification="center", element_justification="center")
+janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout, size=(900, 250), text_justification="center", element_justification="center")
 
 while True:
     evento, valores = janela.read()
