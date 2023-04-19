@@ -10,7 +10,7 @@ layout = [
     [[sg.Text("ESCOLHA UM DOS ALGORÍTMOS: ", font=("Helvetica", 15)), sg.Button("FORÇA BRUTA", font=("Helvetica", 15)), sg.Button("BRANCH-AND-BOUND", font=("Helvetica", 15))]],
 ]
 
-janela = sg.Window("TRABALHO 1 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout, size=(900, 250), text_justification="center", element_justification="center")
+janela = sg.Window("TRABALHO 2 - PROJETO E ANÁLISE DE ALGORÍTMOS", layout, size=(900, 250), text_justification="center", element_justification="center")
 
 while True:
     evento, valores = janela.read()
