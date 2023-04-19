@@ -1,17 +1,15 @@
-# Ciência da Computação - Projeto e Análise de Algoritmos
-# Bruno Faria - 
-# Lucas de Paula - 
+# Ciências da Computação - Projeto e Análise de Algoritmos
+# Bruno Faria - 742238
+# Lucas de Paula - 727840
 # Maria Luisa Raso - 698215
 
 import PySimpleGUI as sg # Importar o módulo PySimpleGUI para o GUI
-
 import src.interfaceInicial as interfaceInicial # Importar o módulo próprio do GUI
 
-layout = [ ]
+layout = []
 
 def main():
-
-    window = sg.Window('Trabalho 1 - Ciência da Computação', layout)
+    window = sg.Window('Trabalho 1 - Ciências da Computação', layout)
 
     while True:
         event, values = window.read()

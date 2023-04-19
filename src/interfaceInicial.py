@@ -3,7 +3,7 @@ import PySimpleGUI as sg
 sg.theme('LightGray1') 
 layout = [
     [sg.Text("OTIMIZAÇÃO DE ENTREGAS", size=(90, 1), justification='center', font=("Helvetica", 15))],
-        [sg.Text("Bruno Faria, Lucas de Paula, Maria Luísa Tomich Raso", size=(90, 1), justification='center', font=("Helvetica", 15))],
+    [sg.Text("Bruno Faria, Lucas de Paula, Maria Luísa Tomich Raso", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [sg.Text("-----------------------------------------------------------------------------", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [sg.Text(" ", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [[sg.Text("ESCOLHA ARQUIVO DE ENTRADA: ", font=("Helvetica", 15)), sg.FileBrowse("ESCOLHER", font=("Helvetica", 15))]],
@@ -24,5 +24,4 @@ while True:
         print()
         # import src.branchAndBound as branchAndBound   
         # branchAndBound.main()
-
 janela.close()
