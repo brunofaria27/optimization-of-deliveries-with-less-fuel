@@ -1,4 +1,8 @@
+# Bibliotecas do python
 import PySimpleGUI as sg
+
+# Funções importadas do próprio projeto
+import solutions.algoritmos as algo
 
 sg.theme('LightGray1') 
 layout = [
@@ -18,8 +22,7 @@ while True:
     if evento == sg.WIN_CLOSED or evento == "Cancelar":
         break
     if evento == "FORÇA BRUTA":
-        import solutions.bruteForce as bruteForce
-        bruteForce.main(valores["-FILEBROWSE-"], valores["-K_PRODUTOS-"])
+        algo.bruteForce(valores["-FILEBROWSE-"], valores["-K_PRODUTOS-"])
     if evento == "BRANCH AND BOUND":
         print("Ainda vou colocar o de branch and bound aqui! :)")
 janela.close()
