@@ -6,7 +6,7 @@ layout = [
     [sg.Text("Bruno Faria, Lucas de Paula, Maria Luísa Tomich Raso", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [sg.Text("-----------------------------------------------------------------------------", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [sg.Text(" ", size=(90, 1), justification='center', font=("Helvetica", 15))],
-    [[sg.Text("ESCOLHA ARQUIVO DE ENTRADA: ", font=("Helvetica", 15)), sg.FileBrowse("ESCOLHER", font=("Helvetica", 15))]],
+    [[sg.Text("ESCOLHA ARQUIVO DE ENTRADA: ", font=("Helvetica", 15)), sg.FileBrowse("ESCOLHER", font=("Helvetica", 15), key="-FILEBROWSE-")]],
     [[sg.Text("ESCOLHA UM DOS ALGORÍTMOS: ", font=("Helvetica", 15)), sg.Button("FORÇA BRUTA", font=("Helvetica", 15)), sg.Button("BRANCH-AND-BOUND", font=("Helvetica", 15))]],
 ]
 
@@ -17,11 +17,8 @@ while True:
     if evento == sg.WIN_CLOSED or evento == "Cancelar":
         break
     if evento == "FORÇA BRUTA":
-        print()
-        # import src.forcaBruta as forcaBruta
-        # forcaBruta.main()
+        import solutions.bruteForce as bruteForce
+        bruteForce.main(valores["-FILEBROWSE-"])
     if evento == "BRANCH AND BOUND":
-        print()
-        # import src.branchAndBound as branchAndBound   
-        # branchAndBound.main()
+        print("Ainda vou colocar o de branch and bound aqui! :)")
 janela.close()
