@@ -11,6 +11,10 @@ To run the code, just give the command below to install the dependencies in `pip
 ```
 pip install -r requirements.txt
 ```
+```
+cd src
+python3 main.py
+```
 
 --------------------
 ### Documentation
@@ -30,6 +34,11 @@ Para executar o c√≥digo, basta digitar o comando abaixo para instalar as depend√
 
 ```
 pip install -r requirements.txt
+```
+
+```
+cd src
+python3 main.py
 ```
 
 --------------------
