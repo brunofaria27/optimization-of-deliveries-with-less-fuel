@@ -24,5 +24,5 @@ while True:
     if evento == "FORÇA BRUTA":
         algo.bruteForce(valores["-FILEBROWSE-"], valores["-K_PRODUTOS-"])
     if evento == "BRANCH AND BOUND":
-        print("Ainda vou colocar o de branch and bound aqui! :)")
+        algo.branchAndBound(valores["-FILEBROWSE-"], valores["-K_PRODUTOS-"])
 janela.close()
