@@ -1,4 +1,5 @@
 # Bibliotecas do python
+import itertools
 
 # Funções importadas do próprio projeto
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
@@ -6,17 +7,25 @@ import solutions.utils_solutions as utils # Funções que serão usadas tanto no
 RENDIMENTO_LITRO = 10
 
 def generate_permutations(lojas):
-    def helper(current_permutation, remaining_lojas):
-        if len(remaining_lojas) == 0:
-            return [current_permutation + [0]]
-        permutations = []
-        for i, loja_id in enumerate(remaining_lojas):
-            next_permutation = current_permutation + [loja_id]
-            next_remaining = remaining_lojas[:i] + remaining_lojas[i+1:]
-            permutations.extend(helper(next_permutation, next_remaining))
-        return permutations
-    loja_ids = list(lojas.keys())[1:]  # remove a loja 0
-    return helper([0], loja_ids)
+    lojas_sem_lista = list(lojas.keys())
+
+    lojas_com_lista = []
+    for loja in lojas_sem_lista:
+        if lojas[loja][2]:
+            lojas_com_lista.append(loja)
+
+    lojas = list(lojas.keys())
+    lojas.remove(0)
+    caminho = [0]
+    permutacoes = []
+    for loja_com_lista in lojas_com_lista:
+        lojas.remove(loja_com_lista)
+        caminho.append(loja_com_lista)
+        for perm in itertools.permutations(lojas):
+            permutacoes.append(caminho + list(perm) + [0])
+        caminho.pop()
+        lojas.append(loja_com_lista)
+    return permutacoes # Número de lojas - 2 = N * Número de lojas com lista = Quantidade de caminhos possiveis
 
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
