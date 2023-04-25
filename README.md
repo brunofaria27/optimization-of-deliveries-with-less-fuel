@@ -16,9 +16,12 @@ pip install -r requirements.txt
 ### Documentation
 - [Overleaf to edit](https://www.overleaf.com/4476556134jqrktrpymrnx)
 
+---------------------
+
 ## PORTUGUÊS - Otimização do gasto de combustível em entregas
 
 Optimização do combustível das entregas, para vários ramos numa matriz de 0 - 500, que equivale à quilometragem. Com interface animada para visualização de força bruta e algoritmos branch-and-bound.
+
 --------------------
 
 ### ✅ Rodar o código
