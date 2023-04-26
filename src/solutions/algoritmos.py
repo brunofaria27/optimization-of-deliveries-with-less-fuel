@@ -4,8 +4,6 @@ import itertools
 # Funções importadas do próprio projeto
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
 
-RENDIMENTO_LITRO = 10
-
 def generate_permutations_first_products(lojas):
     lojas_sem_lista = list(lojas.keys())
 
