@@ -30,12 +30,12 @@ def generate_permutations(lojas):
     lojas_filiais = list(lojas.keys())
     lojas_filiais.remove(0) # Origem e destino não entra na permutação
     for perm in itertools.permutations(lojas_filiais):
-        permutacoes.append([] + list(perm) + [0])
+        permutacoes.append([0] + list(perm) + [0])
     return permutacoes # Quantidade de caminhos possiveis = (len(lojas) - 1)!
 
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
-    print(len(generate_permutations(lojas)))
+    print(generate_permutations(lojas))
 
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
