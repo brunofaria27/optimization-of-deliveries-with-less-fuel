@@ -37,7 +37,7 @@ def generate_perm(lojas):
     lojas_filiais = list(lojas.keys())
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
     def generate_permutations_(lista_lojas):
-        if len(lista_lojas) <= 1: return [lista_lojas]
+        if len(lista_lojas) <= 1: return [[0] + lista_lojas + [0]]
         permutacoes = []
         for i in range(len(lista_lojas)):
             elemento_atual = lista_lojas[i]
@@ -48,9 +48,28 @@ def generate_perm(lojas):
         return permutacoes
     return generate_permutations_(lojas_filiais)
 
+def generate_perm(lojas):
+    lojas_filiais = list(lojas.keys())
+    lojas_filiais.remove(0)  # Origem e destino não entram na permutação
+
+    def generate_permutations_(lista_lojas):
+        if len(lista_lojas) == 0: return [[]]
+
+        permutacoes = []
+        for i in range(len(lista_lojas)):
+            elemento_atual = lista_lojas[i]
+            elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
+            permutacoes_restantes = generate_permutations_(elementos_restantes)
+            for perm in permutacoes_restantes:
+                permutacoes.append([elemento_atual] + perm)
+        return permutacoes
+    permutacoes = generate_permutations_(lojas_filiais)
+    permutacoes_com_zero = [[0] + perm + [0] for perm in permutacoes] # Adicionando destino e origem na permutação
+    return permutacoes_com_zero
+
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
-    print(len(generate_perm(lojas)))
+    print(generate_perm(lojas))
 
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
