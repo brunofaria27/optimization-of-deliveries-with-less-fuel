@@ -33,7 +33,7 @@ def generate_permutations(lojas):
     lojas_filiais.remove(0) # Origem e destino não entra na permutação
     for perm in itertools.permutations(lojas_filiais):
         permutacoes.append([] + list(perm) + [0])
-    return permutacoes
+    return permutacoes # Quantidade de caminhos possiveis = (len(lojas) - 1)!
 
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
