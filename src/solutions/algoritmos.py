@@ -36,21 +36,6 @@ def generate_permutations(lojas):
 def generate_perm(lojas):
     lojas_filiais = list(lojas.keys())
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
-    def generate_permutations_(lista_lojas):
-        if len(lista_lojas) <= 1: return [[0] + lista_lojas + [0]]
-        permutacoes = []
-        for i in range(len(lista_lojas)):
-            elemento_atual = lista_lojas[i]
-            elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
-            permutacoes_restantes = generate_permutations_(elementos_restantes)
-            for perm in permutacoes_restantes:
-                permutacoes.append([elemento_atual] + perm)
-        return permutacoes
-    return generate_permutations_(lojas_filiais)
-
-def generate_perm(lojas):
-    lojas_filiais = list(lojas.keys())
-    lojas_filiais.remove(0)  # Origem e destino não entram na permutação
 
     def generate_permutations_(lista_lojas):
         if len(lista_lojas) == 0: return [[]]
