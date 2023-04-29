@@ -1,5 +1,6 @@
 # Bibliotecas do python
 import itertools
+import math
 
 # Funções importadas do próprio projeto
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
@@ -51,9 +52,31 @@ def permutacoes(lojas):
     permutacoes_com_zero = [[0] + perm + [0] for perm in permutacoes] # Adicionando destino e origem na permutação
     return permutacoes_com_zero
 
+def calculate_distance(xA, yA, xB, yB):
+    return math.sqrt((xA - xB)**2 + (yA - yB)**2)
+
+def calcula_viagem_total(lojas, caminho):
+    distancia_total = 0
+    for i in range(len(caminho) - 1):
+            xA, yA = lojas[caminho[i]][0], lojas[caminho[i]][1]
+            xB, yB = lojas[caminho[i + 1]][0], lojas[caminho[i + 1]][1]
+            distancia = calculate_distance(xA, yA, xB, yB)
+            distancia_total += distancia
+    return distancia_total
+
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
-    print(permutacoes(lojas))
-
+    possiveis_caminhos = generate_permutations(lojas)
+    melhor_caminho = None
+    melhor_custo = float('inf')
+    print(melhor_custo)
+    for caminho in possiveis_caminhos:
+        custo_viagem = calcula_viagem_total(lojas, caminho)
+        if custo_viagem < melhor_custo:
+            melhor_caminho = caminho
+            melhor_custo = custo_viagem
+    print("Melhor caminho: " + str(melhor_caminho))
+    print("Custo total distância: " + str(melhor_custo))
+        
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
