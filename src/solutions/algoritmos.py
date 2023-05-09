@@ -69,7 +69,6 @@ def bruteForce(filename, k_produtos):
     possiveis_caminhos = generate_permutations(lojas)
     melhor_caminho = None
     melhor_custo = float('inf')
-    print(melhor_custo)
     for caminho in possiveis_caminhos:
         custo_viagem = calcula_viagem_total(lojas, caminho)
         if custo_viagem < melhor_custo:
@@ -80,3 +79,8 @@ def bruteForce(filename, k_produtos):
         
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
+
+# 10 KM/L
+# 1 PRODUTO = 9.5 KM/L
+# 10 PRODUTOS = 5 KM/L
+# 100KM / 5KM/L = 20 L -> DISTANCIA / GASTO DO CAMINHAO (10 - (0.5  * QUANTIDADE DE ITENS NO CAMINHÃO)) = LITROS GASTOS
