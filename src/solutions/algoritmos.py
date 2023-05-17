@@ -60,40 +60,48 @@ def calculate_distance(xA, yA, xB, yB):
 def calcula_viagem_total(lojas, caminho, k_produtos):
     distancia_total = 0
     produtos_pegos = ListaLimitada(k_produtos)
-    for loja in range(len(caminho) - 1):
-            xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
-            xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
-            distancia = calculate_distance(xA, yA, xB, yB)
-            distancia_total += distancia
+    rendimento = 10
+    rendimento_total = 0
 
-            if caminho[loja + 1] != 0:
-                produtos_loja = lojas[caminho[loja + 1]][2]
-                if len(produtos_loja) > k_produtos or len(produtos_loja) > k_produtos - len(produtos_pegos):
-                    print('Caminho inválido')
-                    return float('inf')
-                if len(produtos_loja) != []:
-                    for produto in produtos_loja:
-                        produtos_pegos.adicionar(produto)
-                    produtos_loja.clear()
-                    print('Loja: ' +  str(produtos_loja))
-                    print(produtos_pegos)
-                    # TODO: fazer ele pegar o caminhao e atualizar o rendmento.
-                    # TODO: entregar produtos e atualizar rendimento -  alem de logs para poder plotar o grafico do melhor caminho
+    for loja in range(len(caminho) - 1):
+        if caminho[loja] != 0:
+            produtos_loja = lojas[caminho[loja]][2].copy()
+
+            if len(produtos_loja) != []:
+                for produto in produtos_loja:
+                    produtos_pegos.adicionar(produto)
+                    rendimento -= 0.5
+                produtos_loja.clear()
                 
-    return distancia_total
+            # Verificar se tem entrega
+            if caminho[loja] in produtos_pegos.lista:
+                for entrega in produtos_pegos.lista.copy():
+                    if entrega == caminho[loja]:
+                        produtos_pegos.remover_por_valor(caminho[loja])
+                        rendimento += 0.5
+
+        xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
+        xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
+        distancia = calculate_distance(xA, yA, xB, yB)
+        rendimento_total += distancia / rendimento
+        distancia_total += distancia
+        produtos_caminhao = len(produtos_pegos)
+    return rendimento_total, distancia_total, produtos_caminhao
 
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
     possiveis_caminhos = generate_permutations(lojas)
     melhor_caminho = None
     melhor_custo = float('inf')
+    melhor_distancia = None
     for caminho in possiveis_caminhos:
-        print('Caminho atual: ' + str(caminho))
-        custo_viagem = calcula_viagem_total(lojas, caminho, int(k_produtos))
-        if custo_viagem < melhor_custo:
+        custo_viagem, distancia_total, itens_caminhao = calcula_viagem_total(lojas, caminho, int(k_produtos))
+        if itens_caminhao == 0 and custo_viagem < melhor_custo:
             melhor_caminho = caminho
+            melhor_distancia = distancia_total
             melhor_custo = custo_viagem
     print("Melhor caminho: " + str(melhor_caminho))
+    print("Distância total: " + str(melhor_distancia))
     print("Custo total distância: " + str(melhor_custo))
         
 def branchAndBound(filename, k_produtos):
