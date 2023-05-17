@@ -66,11 +66,11 @@ def calcula_viagem_total(lojas, caminho, k_produtos):
     for loja in range(len(caminho) - 1):
         if caminho[loja] != 0:
             produtos_loja = lojas[caminho[loja]][2].copy()
-
+            
             if len(produtos_loja) != []:
                 for produto in produtos_loja:
-                    produtos_pegos.adicionar(produto)
-                    rendimento -= 0.5
+                    if produtos_pegos.adicionar(produto):
+                        rendimento -= 0.5
                 produtos_loja.clear()
                 
             # Verificar se tem entrega
