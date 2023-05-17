@@ -5,6 +5,8 @@ import math
 # Funções importadas do próprio projeto
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
 
+from models.List import ListaLimitada
+
 def generate_permutations_first_products(lojas):
     lojas_sem_lista = list(lojas.keys())
 
@@ -55,13 +57,21 @@ def permutacoes(lojas):
 def calculate_distance(xA, yA, xB, yB):
     return math.sqrt((xA - xB)**2 + (yA - yB)**2)
 
-def calcula_viagem_total(lojas, caminho):
+def calcula_viagem_total(lojas, caminho, k_produtos):
     distancia_total = 0
+    produtos_pegos = ListaLimitada(k_produtos)
     for i in range(len(caminho) - 1):
             xA, yA = lojas[caminho[i]][0], lojas[caminho[i]][1]
             xB, yB = lojas[caminho[i + 1]][0], lojas[caminho[i + 1]][1]
             distancia = calculate_distance(xA, yA, xB, yB)
             distancia_total += distancia
+
+            if caminho[i + 1] != 0:
+                produtos_loja = lojas[caminho[i + 1]][2]
+                if len(produtos_loja) > k_produtos or len(produtos_loja) > k_produtos - len(produtos_pegos):
+                    print('Caminho inválido')
+                    return float('inf')          
+                
     return distancia_total
 
 def bruteForce(filename, k_produtos):
@@ -70,7 +80,7 @@ def bruteForce(filename, k_produtos):
     melhor_caminho = None
     melhor_custo = float('inf')
     for caminho in possiveis_caminhos:
-        custo_viagem = calcula_viagem_total(lojas, caminho)
+        custo_viagem = calcula_viagem_total(lojas, caminho, int(k_produtos))
         if custo_viagem < melhor_custo:
             melhor_caminho = caminho
             melhor_custo = custo_viagem
