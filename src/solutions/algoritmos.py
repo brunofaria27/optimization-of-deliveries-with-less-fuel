@@ -60,17 +60,25 @@ def calculate_distance(xA, yA, xB, yB):
 def calcula_viagem_total(lojas, caminho, k_produtos):
     distancia_total = 0
     produtos_pegos = ListaLimitada(k_produtos)
-    for i in range(len(caminho) - 1):
-            xA, yA = lojas[caminho[i]][0], lojas[caminho[i]][1]
-            xB, yB = lojas[caminho[i + 1]][0], lojas[caminho[i + 1]][1]
+    for loja in range(len(caminho) - 1):
+            xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
+            xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
             distancia = calculate_distance(xA, yA, xB, yB)
             distancia_total += distancia
 
-            if caminho[i + 1] != 0:
-                produtos_loja = lojas[caminho[i + 1]][2]
+            if caminho[loja + 1] != 0:
+                produtos_loja = lojas[caminho[loja + 1]][2]
                 if len(produtos_loja) > k_produtos or len(produtos_loja) > k_produtos - len(produtos_pegos):
                     print('Caminho inválido')
-                    return float('inf')          
+                    return float('inf')
+                if len(produtos_loja) != []:
+                    for produto in produtos_loja:
+                        produtos_pegos.adicionar(produto)
+                    produtos_loja.clear()
+                    print('Loja: ' +  str(produtos_loja))
+                    print(produtos_pegos)
+                    # TODO: fazer ele pegar o caminhao e atualizar o rendmento.
+                    # TODO: entregar produtos e atualizar rendimento -  alem de logs para poder plotar o grafico do melhor caminho
                 
     return distancia_total
 
@@ -80,6 +88,7 @@ def bruteForce(filename, k_produtos):
     melhor_caminho = None
     melhor_custo = float('inf')
     for caminho in possiveis_caminhos:
+        print('Caminho atual: ' + str(caminho))
         custo_viagem = calcula_viagem_total(lojas, caminho, int(k_produtos))
         if custo_viagem < melhor_custo:
             melhor_caminho = caminho

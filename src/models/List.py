@@ -8,6 +8,12 @@ class ListaLimitada:
             self.lista.append(item)
         else:
             raise Exception('Não é possível adicionar mais itens à lista')
+        
+    def remover_por_valor(self, valor):
+        if valor in self.lista:
+            self.lista.remove(valor)
+        else:
+            raise ValueError(f'O valor {valor} não está presente na lista')
 
     def __len__(self):
         return len(self.lista)
