@@ -1,9 +1,13 @@
 # Bibliotecas do python
 import itertools
 import math
+import copy
 
-# Funções importadas do próprio projeto
+# Funções
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
+
+# Objetos
+from models.List import ListaLimitada
 
 def generate_permutations_first_products(lojas):
     lojas_sem_lista = list(lojas.keys())
@@ -55,32 +59,60 @@ def permutacoes(lojas):
 def calculate_distance(xA, yA, xB, yB):
     return math.sqrt((xA - xB)**2 + (yA - yB)**2)
 
-def calcula_viagem_total(lojas, caminho):
+def calcula_viagem_total(lojas, caminho, k_produtos):
     distancia_total = 0
-    for i in range(len(caminho) - 1):
-            xA, yA = lojas[caminho[i]][0], lojas[caminho[i]][1]
-            xB, yB = lojas[caminho[i + 1]][0], lojas[caminho[i + 1]][1]
-            distancia = calculate_distance(xA, yA, xB, yB)
-            distancia_total += distancia
-    return distancia_total
+    rendimento_total = 0
+    produtos_pegos = ListaLimitada(k_produtos)
+    lojas_copy = copy.deepcopy(lojas)
+    rendimento = 10
+
+    for loja in range(len(caminho) - 1):
+        if caminho[loja] != 0:
+            produtos_loja = lojas[caminho[loja]][2].copy()
+
+            # Verificar se tem entrega
+            if caminho[loja] in produtos_pegos.lista:
+                for entrega in produtos_pegos.lista.copy():
+                    if entrega == caminho[loja]:
+                        produtos_pegos.remover_por_valor(caminho[loja])
+                        rendimento += 0.5
+            
+            # Pegar produtos
+            if len(produtos_loja) != []:
+                for produto in produtos_loja:
+                    if produtos_pegos.adicionar(produto):
+                        lojas_copy[caminho[loja]][2].remove(produto)
+                        rendimento -= 0.5
+                produtos_loja.clear()
+                
+        xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
+        xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
+        distancia = calculate_distance(xA, yA, xB, yB)
+        rendimento_total += distancia / rendimento
+        distancia_total += distancia
+    return rendimento_total, distancia_total, len(produtos_pegos), lojas_copy
+
+def verificaProdutosEntregues(lojas):
+    for entregas in lojas.values():
+        if entregas[2]:  # Verifica se a lista de entregas da loja não está vazia
+            return False
+    return True
 
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
     possiveis_caminhos = generate_permutations(lojas)
     melhor_caminho = None
     melhor_custo = float('inf')
+    melhor_distancia = None
     for caminho in possiveis_caminhos:
-        custo_viagem = calcula_viagem_total(lojas, caminho)
-        if custo_viagem < melhor_custo:
+        custo_viagem, distancia_total, itens_caminhao, lojas_copy = calcula_viagem_total(lojas, caminho, int(k_produtos))
+        if itens_caminhao == 0 and custo_viagem < melhor_custo and verificaProdutosEntregues(lojas_copy):
             melhor_caminho = caminho
+            melhor_distancia = distancia_total
             melhor_custo = custo_viagem
     print("Melhor caminho: " + str(melhor_caminho))
+    print("Distância total: " + str(melhor_distancia))
     print("Custo total distância: " + str(melhor_custo))
         
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
-
-# 10 KM/L
-# 1 PRODUTO = 9.5 KM/L
-# 10 PRODUTOS = 5 KM/L
-# 100KM / 5KM/L = 20 L -> DISTANCIA / GASTO DO CAMINHAO (10 - (0.5  * QUANTIDADE DE ITENS NO CAMINHÃO)) = LITROS GASTOS
