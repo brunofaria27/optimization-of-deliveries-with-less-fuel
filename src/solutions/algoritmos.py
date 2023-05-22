@@ -2,6 +2,10 @@
 import itertools
 import math
 import copy
+import time
+
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 # Funções
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
@@ -60,8 +64,10 @@ def calculate_distance(xA, yA, xB, yB):
     return math.sqrt((xA - xB)**2 + (yA - yB)**2)
 
 def calcula_viagem_total(lojas, caminho, k_produtos):
-    distancia_total = 0
-    rendimento_total = 0
+    lista_rendimento_plotar = list()
+    lista_distancia_plotar = list()
+    lista_produtos = list()
+
     produtos_pegos = ListaLimitada(k_produtos)
     lojas_copy = copy.deepcopy(lojas)
     rendimento = 10
@@ -88,9 +94,10 @@ def calcula_viagem_total(lojas, caminho, k_produtos):
         xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
         xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
         distancia = calculate_distance(xA, yA, xB, yB)
-        rendimento_total += distancia / rendimento
-        distancia_total += distancia
-    return rendimento_total, distancia_total, len(produtos_pegos), lojas_copy
+        lista_rendimento_plotar.append(distancia / rendimento)
+        lista_distancia_plotar.append(distancia)
+        lista_produtos.append(produtos_pegos.lista.copy())
+    return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_distancia_plotar, lista_produtos
 
 def verificaProdutosEntregues(lojas):
     for entregas in lojas.values():
@@ -101,18 +108,71 @@ def verificaProdutosEntregues(lojas):
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
     possiveis_caminhos = generate_permutations(lojas)
+
     melhor_caminho = None
     melhor_custo = float('inf')
-    melhor_distancia = None
+    lista_melhor_custo = None
+    lista_melhor_distancia = None
+    lista_melhor_teste = None
+
     for caminho in possiveis_caminhos:
-        custo_viagem, distancia_total, itens_caminhao, lojas_copy = calcula_viagem_total(lojas, caminho, int(k_produtos))
+        itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_distancia_plotar, lista_teste = calcula_viagem_total(lojas, caminho, int(k_produtos))
+        custo_viagem = sum(lista_rendimento_plotar)
         if itens_caminhao == 0 and custo_viagem < melhor_custo and verificaProdutosEntregues(lojas_copy):
             melhor_caminho = caminho
-            melhor_distancia = distancia_total
             melhor_custo = custo_viagem
+            lista_melhor_custo = lista_rendimento_plotar
+            lista_melhor_distancia = lista_distancia_plotar
+            lista_melhor_teste = lista_teste
     print("Melhor caminho: " + str(melhor_caminho))
-    print("Distância total: " + str(melhor_distancia))
+    print("Distância total: " + str(sum(lista_melhor_distancia)))
     print("Custo total distância: " + str(melhor_custo))
+    print("TESTE: " + str(lista_melhor_teste))
+    plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_teste)
+
+def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_teste):
+    print(lista_teste)
+    fig, ax = plt.subplots(figsize=(10, 8))
+    xC = []
+    yC = []
+
+    for loja_id, loja_info in lojas.items():
+        x_coord, y_coord, _ = loja_info  
+        xC.append(x_coord)
+        yC.append(y_coord)
+
+    plt.scatter(xC, yC)
+
+    def update(frame):
+        time.sleep(0.5)
+        ax.clear()
+        ax.scatter(xC, yC)
         
+        # Atualize o caminho percorrido no gráfico
+        x = [lojas[loja][0] for loja in melhor_caminho[:frame+1]]
+        y = [lojas[loja][1] for loja in melhor_caminho[:frame+1]]
+        ax.plot(x, y, 'bo-')
+
+        # Adicione o índice da loja aos pontos
+        for i, (xi, yi) in enumerate(zip(x, y)):
+            ax.text(xi, yi, str(melhor_caminho[i]), ha='center', va='bottom')
+
+        # Atualize o gasto de combustível
+        gasto_combustivel = sum(lista_melhor_custo[:frame])
+        ax.set_title(f"Gasto de Combustível: {gasto_combustivel:.2f} L")
+
+        ax.set_xlabel("Coordenada X")
+        ax.set_ylabel("Coordenada Y")
+        ax.set_xlim(min(lojas.values(), key=lambda x: x[0])[0] - 10, max(lojas.values(), key=lambda x: x[0])[0] + 10)
+        ax.set_ylim(min(lojas.values(), key=lambda x: x[1])[1] - 10, max(lojas.values(), key=lambda x: x[1])[1] + 10)
+
+        # Adicione a legenda com o índice do array lista_teste
+        if frame < len(lista_teste):
+            legenda = f"Produtos no caminhão: {lista_teste[frame]}"
+            ax.text(0.5, -0.1, legenda, transform=ax.transAxes, ha='center', fontsize=12)
+
+    anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500) # Cria a animação frame por frame
+    plt.show()
+
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
