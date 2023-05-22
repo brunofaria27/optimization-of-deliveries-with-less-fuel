@@ -129,9 +129,19 @@ def bruteForce(filename, k_produtos):
 
 def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia):
     fig, ax = plt.subplots()
+    xC = []
+    yC = []
+
+    for loja_id, loja_info in lojas.items():
+        x_coord, y_coord, _ = loja_info  
+        xC.append(x_coord)
+        yC.append(y_coord)
+
+    plt.scatter(xC, yC)
     def update(frame):
         ax.clear()
-
+        ax.scatter(xC, yC)
+        
         # Atualize o caminho percorrido no gráfico
         x = [lojas[loja][0] for loja in melhor_caminho[:frame+1]]
         y = [lojas[loja][1] for loja in melhor_caminho[:frame+1]]
