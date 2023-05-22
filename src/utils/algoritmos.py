@@ -127,11 +127,10 @@ def bruteForce(filename, k_produtos):
     print("Melhor caminho: " + str(melhor_caminho))
     print("Distância total: " + str(sum(lista_melhor_distancia)))
     print("Custo total distância: " + str(melhor_custo))
-    print("TESTE: " + str(lista_melhor_teste))
+    print("Itens caminhão: " + str(lista_melhor_teste))
     plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_teste)
 
 def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_teste):
-    print(lista_teste)
     fig, ax = plt.subplots(figsize=(10, 8))
     xC = []
     yC = []
