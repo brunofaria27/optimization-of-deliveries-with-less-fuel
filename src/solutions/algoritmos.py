@@ -2,6 +2,7 @@
 import itertools
 import math
 import copy
+import time
 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -95,7 +96,7 @@ def calcula_viagem_total(lojas, caminho, k_produtos):
         distancia = calculate_distance(xA, yA, xB, yB)
         lista_rendimento_plotar.append(distancia / rendimento)
         lista_distancia_plotar.append(distancia)
-        lista_produtos.append(len(produtos_pegos))
+        lista_produtos.append(produtos_pegos.lista.copy())
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_distancia_plotar, lista_produtos
 
 def verificaProdutosEntregues(lojas):
@@ -127,10 +128,11 @@ def bruteForce(filename, k_produtos):
     print("Distância total: " + str(sum(lista_melhor_distancia)))
     print("Custo total distância: " + str(melhor_custo))
     print("TESTE: " + str(lista_melhor_teste))
-    plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia)
+    plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_teste)
 
-def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia):
-    fig, ax = plt.subplots()
+def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_teste):
+    print(lista_teste)
+    fig, ax = plt.subplots(figsize=(10, 8))
     xC = []
     yC = []
 
@@ -140,7 +142,9 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distanc
         yC.append(y_coord)
 
     plt.scatter(xC, yC)
+
     def update(frame):
+        time.sleep(0.5)
         ax.clear()
         ax.scatter(xC, yC)
         
@@ -161,6 +165,12 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distanc
         ax.set_ylabel("Coordenada Y")
         ax.set_xlim(min(lojas.values(), key=lambda x: x[0])[0] - 10, max(lojas.values(), key=lambda x: x[0])[0] + 10)
         ax.set_ylim(min(lojas.values(), key=lambda x: x[1])[1] - 10, max(lojas.values(), key=lambda x: x[1])[1] + 10)
+
+        # Adicione a legenda com o índice do array lista_teste
+        if frame < len(lista_teste):
+            legenda = f"Produtos no caminhão: {lista_teste[frame]}"
+            ax.text(0.5, -0.1, legenda, transform=ax.transAxes, ha='center', fontsize=12)
+
     anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500) # Cria a animação frame por frame
     plt.show()
 
