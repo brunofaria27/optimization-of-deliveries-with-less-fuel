@@ -2,6 +2,7 @@
 import itertools
 import math
 import copy
+import matplotlib
 
 # Funções
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
@@ -60,11 +61,12 @@ def calculate_distance(xA, yA, xB, yB):
     return math.sqrt((xA - xB)**2 + (yA - yB)**2)
 
 def calcula_viagem_total(lojas, caminho, k_produtos):
-    distancia_total = 0
-    rendimento_total = 0
     produtos_pegos = ListaLimitada(k_produtos)
     lojas_copy = copy.deepcopy(lojas)
     rendimento = 10
+
+    lista_rendimento_plotar = list()
+    lista_distancia_plotar = list()
 
     for loja in range(len(caminho) - 1):
         if caminho[loja] != 0:
@@ -88,9 +90,9 @@ def calcula_viagem_total(lojas, caminho, k_produtos):
         xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
         xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
         distancia = calculate_distance(xA, yA, xB, yB)
-        rendimento_total += distancia / rendimento
-        distancia_total += distancia
-    return rendimento_total, distancia_total, len(produtos_pegos), lojas_copy
+        lista_rendimento_plotar.append(distancia / rendimento)
+        lista_distancia_plotar.append(distancia)
+    return lista_rendimento_plotar, lista_distancia_plotar, len(produtos_pegos), lojas_copy
 
 def verificaProdutosEntregues(lojas):
     for entregas in lojas.values():
@@ -101,18 +103,23 @@ def verificaProdutosEntregues(lojas):
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
     possiveis_caminhos = generate_permutations(lojas)
+
     melhor_caminho = None
     melhor_custo = float('inf')
-    melhor_distancia = None
+    lista_melhor_custo = None
+    lista_melhor_distancia = None
+
     for caminho in possiveis_caminhos:
-        custo_viagem, distancia_total, itens_caminhao, lojas_copy = calcula_viagem_total(lojas, caminho, int(k_produtos))
-        if itens_caminhao == 0 and custo_viagem < melhor_custo and verificaProdutosEntregues(lojas_copy):
+        lista_custo_viagem, lista_distancia_total, itens_caminhao, lojas_copy = calcula_viagem_total(lojas, caminho, int(k_produtos))
+        custo_total = sum(lista_custo_viagem) # Somar todos custos de cada parte do caminho (gasolina)
+        if itens_caminhao == 0 and custo_total < melhor_custo and verificaProdutosEntregues(lojas_copy):
             melhor_caminho = caminho
-            melhor_distancia = distancia_total
-            melhor_custo = custo_viagem
-    print("Melhor caminho: " + str(melhor_caminho))
-    print("Distância total: " + str(melhor_distancia))
-    print("Custo total distância: " + str(melhor_custo))
+            lista_melhor_custo = lista_custo_viagem
+            lista_melhor_distancia = lista_distancia_total
+    plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia)
+
+def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia):
+    return
         
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
