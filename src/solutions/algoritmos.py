@@ -2,7 +2,9 @@
 import itertools
 import math
 import copy
-import matplotlib
+
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 # Funções
 import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
@@ -116,10 +118,44 @@ def bruteForce(filename, k_produtos):
             melhor_caminho = caminho
             lista_melhor_custo = lista_custo_viagem
             lista_melhor_distancia = lista_distancia_total
+    print("Melhor caminho: " + str(melhor_caminho))
+    print("Distância total: " + str(sum(lista_melhor_distancia)))
+    print("Custo total distância: " + str(sum(lista_melhor_custo)))
     plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia)
+    
 
 def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia):
-    return
+    fig, ax = plt.subplots()
+
+    # Função para atualizar o gráfico em cada quadro da animação
+    def update(frame):
+        ax.clear()
+
+        # Atualize o caminho percorrido no gráfico
+        x = [lojas[loja][0] for loja in melhor_caminho[:frame+1]]
+        y = [lojas[loja][1] for loja in melhor_caminho[:frame+1]]
+        ax.plot(x, y, 'bo-')
+
+        # Adicione o índice da loja aos pontos
+        for i, (xi, yi) in enumerate(zip(x, y)):
+            ax.text(xi, yi, str(melhor_caminho[i]), ha='center', va='bottom')
+
+        # Atualize o gasto de combustível
+        gasto_combustivel = sum(lista_melhor_custo[:frame])
+        ax.set_title(f"Gasto de Combustível: {gasto_combustivel:.2f} L")
+
+        # Configurações adicionais do gráfico
+        ax.set_xlabel("Coordenada X")
+        ax.set_ylabel("Coordenada Y")
+        ax.set_xlim(min(lojas.values(), key=lambda x: x[0])[0] - 10,
+                    max(lojas.values(), key=lambda x: x[0])[0] + 10)
+        ax.set_ylim(min(lojas.values(), key=lambda x: x[1])[1] - 10,
+                    max(lojas.values(), key=lambda x: x[1])[1] + 10)
+
+    # Crie a animação
+    anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500)
+    plt.show()
+
         
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
