@@ -63,6 +63,9 @@ def calculate_distance(xA, yA, xB, yB):
     return math.sqrt((xA - xB)**2 + (yA - yB)**2)
 
 def calcula_viagem_total(lojas, caminho, k_produtos):
+    lista_rendimento_plotar = list()
+    lista_distancia_plotar = list()
+
     produtos_pegos = ListaLimitada(k_produtos)
     lojas_copy = copy.deepcopy(lojas)
     rendimento = 10
@@ -94,7 +97,7 @@ def calcula_viagem_total(lojas, caminho, k_produtos):
         distancia = calculate_distance(xA, yA, xB, yB)
         lista_rendimento_plotar.append(distancia / rendimento)
         lista_distancia_plotar.append(distancia)
-    return lista_rendimento_plotar, lista_distancia_plotar, len(produtos_pegos), lojas_copy
+    return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_distancia_plotar
 
 def verificaProdutosEntregues(lojas):
     for entregas in lojas.values():
@@ -112,22 +115,20 @@ def bruteForce(filename, k_produtos):
     lista_melhor_distancia = None
 
     for caminho in possiveis_caminhos:
-        lista_custo_viagem, lista_distancia_total, itens_caminhao, lojas_copy = calcula_viagem_total(lojas, caminho, int(k_produtos))
-        custo_total = sum(lista_custo_viagem) # Somar todos custos de cada parte do caminho (gasolina)
-        if itens_caminhao == 0 and custo_total < melhor_custo and verificaProdutosEntregues(lojas_copy):
+        itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_distancia_plotar = calcula_viagem_total(lojas, caminho, int(k_produtos))
+        custo_viagem = sum(lista_rendimento_plotar)
+        if itens_caminhao == 0 and custo_viagem < melhor_custo and verificaProdutosEntregues(lojas_copy):
             melhor_caminho = caminho
-            lista_melhor_custo = lista_custo_viagem
-            lista_melhor_distancia = lista_distancia_total
+            melhor_custo = custo_viagem
+            lista_melhor_custo = lista_rendimento_plotar
+            lista_melhor_distancia = lista_distancia_plotar
     print("Melhor caminho: " + str(melhor_caminho))
     print("Distância total: " + str(sum(lista_melhor_distancia)))
-    print("Custo total distância: " + str(sum(lista_melhor_custo)))
+    print("Custo total distância: " + str(melhor_custo))
     plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia)
-    
 
 def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia):
     fig, ax = plt.subplots()
-
-    # Função para atualizar o gráfico em cada quadro da animação
     def update(frame):
         ax.clear()
 
@@ -144,18 +145,12 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distanc
         gasto_combustivel = sum(lista_melhor_custo[:frame])
         ax.set_title(f"Gasto de Combustível: {gasto_combustivel:.2f} L")
 
-        # Configurações adicionais do gráfico
         ax.set_xlabel("Coordenada X")
         ax.set_ylabel("Coordenada Y")
-        ax.set_xlim(min(lojas.values(), key=lambda x: x[0])[0] - 10,
-                    max(lojas.values(), key=lambda x: x[0])[0] + 10)
-        ax.set_ylim(min(lojas.values(), key=lambda x: x[1])[1] - 10,
-                    max(lojas.values(), key=lambda x: x[1])[1] + 10)
-
-    # Crie a animação
+        ax.set_xlim(min(lojas.values(), key=lambda x: x[0])[0] - 10, max(lojas.values(), key=lambda x: x[0])[0] + 10)
+        ax.set_ylim(min(lojas.values(), key=lambda x: x[1])[1] - 10, max(lojas.values(), key=lambda x: x[1])[1] + 10)
     anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500)
     plt.show()
 
-        
 def branchAndBound(filename, k_produtos):
     print("Branch and bound")
