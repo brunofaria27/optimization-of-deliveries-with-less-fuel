@@ -149,7 +149,7 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distanc
         ax.set_ylabel("Coordenada Y")
         ax.set_xlim(min(lojas.values(), key=lambda x: x[0])[0] - 10, max(lojas.values(), key=lambda x: x[0])[0] + 10)
         ax.set_ylim(min(lojas.values(), key=lambda x: x[1])[1] - 10, max(lojas.values(), key=lambda x: x[1])[1] + 10)
-    anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500)
+    anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500) # Cria a animação frame por frame
     plt.show()
 
 def branchAndBound(filename, k_produtos):
