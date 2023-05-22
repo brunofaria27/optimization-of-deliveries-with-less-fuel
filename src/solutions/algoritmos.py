@@ -65,13 +65,11 @@ def calculate_distance(xA, yA, xB, yB):
 def calcula_viagem_total(lojas, caminho, k_produtos):
     lista_rendimento_plotar = list()
     lista_distancia_plotar = list()
+    lista_produtos = list()
 
     produtos_pegos = ListaLimitada(k_produtos)
     lojas_copy = copy.deepcopy(lojas)
     rendimento = 10
-
-    lista_rendimento_plotar = list()
-    lista_distancia_plotar = list()
 
     for loja in range(len(caminho) - 1):
         if caminho[loja] != 0:
@@ -97,7 +95,8 @@ def calcula_viagem_total(lojas, caminho, k_produtos):
         distancia = calculate_distance(xA, yA, xB, yB)
         lista_rendimento_plotar.append(distancia / rendimento)
         lista_distancia_plotar.append(distancia)
-    return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_distancia_plotar
+        lista_produtos.append(len(produtos_pegos))
+    return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_distancia_plotar, lista_produtos
 
 def verificaProdutosEntregues(lojas):
     for entregas in lojas.values():
@@ -113,18 +112,21 @@ def bruteForce(filename, k_produtos):
     melhor_custo = float('inf')
     lista_melhor_custo = None
     lista_melhor_distancia = None
+    lista_melhor_teste = None
 
     for caminho in possiveis_caminhos:
-        itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_distancia_plotar = calcula_viagem_total(lojas, caminho, int(k_produtos))
+        itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_distancia_plotar, lista_teste = calcula_viagem_total(lojas, caminho, int(k_produtos))
         custo_viagem = sum(lista_rendimento_plotar)
         if itens_caminhao == 0 and custo_viagem < melhor_custo and verificaProdutosEntregues(lojas_copy):
             melhor_caminho = caminho
             melhor_custo = custo_viagem
             lista_melhor_custo = lista_rendimento_plotar
             lista_melhor_distancia = lista_distancia_plotar
+            lista_melhor_teste = lista_teste
     print("Melhor caminho: " + str(melhor_caminho))
     print("Distância total: " + str(sum(lista_melhor_distancia)))
     print("Custo total distância: " + str(melhor_custo))
+    print("TESTE: " + str(lista_melhor_teste))
     plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia)
 
 def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_distancia):
