@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # Funções
-import solutions.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
+import utils.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
 
 # Objetos
 from models.List import ListaLimitada
