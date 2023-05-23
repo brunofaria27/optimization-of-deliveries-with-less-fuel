@@ -75,7 +75,7 @@ def verificaProdutosEntregues(lojas):
 
 def bruteForce(filename, k_produtos):
     lojas = utils.load_stores(filename)
-    possiveis_caminhos = generate_permutations(lojas)
+    possiveis_caminhos = permutacoes(lojas)
 
     melhor_caminho = None
     melhor_custo = float('inf')
