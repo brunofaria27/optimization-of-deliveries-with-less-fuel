@@ -8,39 +8,10 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # Funções
-import utils.utils_solutions as utils # Funções que serão usadas tanto no força bruta e no branch and bound
+import utils.utils_solutions as utils
 
 # Objetos
 from models.List import ListaLimitada
-
-def generate_permutations_first_products(lojas):
-    lojas_sem_lista = list(lojas.keys())
-
-    lojas_com_lista = []
-    for loja in lojas_sem_lista:
-        if lojas[loja][2]:
-            lojas_com_lista.append(loja)
-
-    lojas = list(lojas.keys())
-    lojas.remove(0)
-    caminho = [0]
-    permutacoes = []
-    for loja_com_lista in lojas_com_lista:
-        lojas.remove(loja_com_lista)
-        caminho.append(loja_com_lista)
-        for perm in itertools.permutations(lojas):
-            permutacoes.append(caminho + list(perm) + [0])
-        caminho.pop()
-        lojas.append(loja_com_lista)
-    return permutacoes # Número de lojas - 2 = N * Número de lojas com lista = Quantidade de caminhos possiveis
-
-def generate_permutations(lojas):
-    permutacoes = []
-    lojas_filiais = list(lojas.keys())
-    lojas_filiais.remove(0) # Origem e destino não entra na permutação
-    for perm in itertools.permutations(lojas_filiais):
-        permutacoes.append([0] + list(perm) + [0])
-    return permutacoes # Quantidade de caminhos possiveis = (len(lojas) - 1)!
 
 def permutacoes(lojas):
     lojas_filiais = list(lojas.keys())
@@ -110,7 +81,7 @@ def bruteForce(filename, k_produtos):
     melhor_caminho = None
     melhor_custo = float('inf')
     lista_melhor_custo = None
-    lista_melhor_teste = None
+    lista_itens_caminhao = None
 
     for caminho in possiveis_caminhos:
         itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_teste = calcula_viagem_total(lojas, caminho, int(k_produtos))
@@ -119,13 +90,13 @@ def bruteForce(filename, k_produtos):
             melhor_caminho = caminho
             melhor_custo = custo_viagem
             lista_melhor_custo = lista_rendimento_plotar
-            lista_melhor_teste = lista_teste
+            lista_itens_caminhao = lista_teste
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(melhor_custo))
-    print("Itens caminhão: " + str(lista_melhor_teste))
-    plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_melhor_teste)
+    print("Itens caminhão: " + str(lista_itens_caminhao))
+    plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)
 
-def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_teste):
+def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao):
     fig, ax = plt.subplots(figsize=(10, 8))
     xC = []
     yC = []
@@ -160,9 +131,9 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_teste):
         ax.set_xlim(min(lojas.values(), key=lambda x: x[0])[0] - 10, max(lojas.values(), key=lambda x: x[0])[0] + 10)
         ax.set_ylim(min(lojas.values(), key=lambda x: x[1])[1] - 10, max(lojas.values(), key=lambda x: x[1])[1] + 10)
 
-        # Adicione a legenda com o índice do array lista_teste
-        if frame < len(lista_teste):
-            legenda = f"Produtos no caminhão: {lista_teste[frame]}"
+        # Adicione a legenda com o índice do array lista_itens_caminhao
+        if frame < len(lista_itens_caminhao):
+            legenda = f"Produtos no caminhão: {lista_itens_caminhao[frame]}"
             ax.text(0.5, -0.1, legenda, transform=ax.transAxes, ha='center', fontsize=12)
 
     anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500) # Cria a animação frame por frame
