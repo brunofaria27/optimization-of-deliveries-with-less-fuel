@@ -1,5 +1,4 @@
 # Bibliotecas do python
-import itertools
 import math
 import copy
 import time
