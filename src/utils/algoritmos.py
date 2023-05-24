@@ -40,9 +40,7 @@ def permutacoes(lojas, k_produtos):
             loja_atual = lista_lojas[i]
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
             generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
-
     generate_permutations(lojas_filiais, [0])
-    
     return melhor_caminho, lista_melhor_custo, lista_itens_caminhao
 
 def calculate_distance(xA, yA, xB, yB):
