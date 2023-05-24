@@ -4,6 +4,7 @@
 # Maria Luisa Raso - 698215
 
 import PySimpleGUI as sg
+
 import interface.menuPrincipal as menuPrincipal
 
 layout = []

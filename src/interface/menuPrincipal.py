@@ -2,7 +2,7 @@
 import PySimpleGUI as sg
 
 # Funções importadas do próprio projeto
-import utils.algoritmos as algo
+import utils.algorithms as algo
 
 sg.theme('LightGray1') 
 layout = [
