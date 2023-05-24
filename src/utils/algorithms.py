@@ -9,6 +9,45 @@ import interface.pathPlotting as plotting
 # Objetos
 from models.List import ListaLimitada
 
+def permutacoesBB(lojas, k_produtos):
+    lojas_filiais = list(lojas.keys())
+    lojas_filiais.remove(0)  # Origem e destino não entram na permutação
+
+    melhor_caminho = None
+    melhor_custo = float('inf')
+    lista_melhor_custo = None
+    lista_itens_caminhao = None
+
+    def bound(permut_atual):
+        # Implementação do limite inferior do custo da permutação atual
+        return sum([lojas[i][0] for i in permut_atual]) + calcula_viagem_total(lojas, permut_atual, int(k_produtos))[0]
+
+    def generate_permutations(lista_lojas, permutacao_atual):
+        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_caminhao
+
+        if bound(permutacao_atual) >= melhor_custo: # aplicação do B&B
+            return
+
+        if len(lista_lojas) == 0:
+            caminho = permutacao_atual + [0]
+            itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_teste, caminho = calcula_viagem_total(lojas, caminho, int(k_produtos))
+            if itens_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
+                custo_viagem = sum(lista_rendimento_plotar)
+                if custo_viagem < melhor_custo:
+                    melhor_caminho = caminho
+                    melhor_custo = custo_viagem
+                    lista_melhor_custo = lista_rendimento_plotar
+                    lista_itens_caminhao = lista_teste
+            return
+
+        for i in range(len(lista_lojas)):
+            loja_atual = lista_lojas[i]
+            elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
+            generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
+
+    generate_permutations(lojas_filiais, [0])
+    return melhor_caminho, lista_melhor_custo, lista_itens_caminhao
+
 def permutacoes(lojas, k_produtos):
     lojas_filiais = list(lojas.keys())
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
@@ -92,4 +131,9 @@ def bruteForce(filename, k_produtos):
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)
 
 def branchAndBound(filename, k_produtos):
-    print("Branch and bound")
+    lojas = fileTreatment.load_stores(filename)
+    melhor_caminho, lista_melhor_custo, lista_itens_caminhao = permutacoesBB(lojas, int(k_produtos))
+    print("Melhor caminho: " + str(melhor_caminho))
+    print("Custo total distância: " + str(sum(lista_melhor_custo)))
+    print("Itens caminhão: " + str(lista_itens_caminhao))
+    plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)
