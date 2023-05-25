@@ -9,7 +9,7 @@ def load_stores(filename):
             lista_destinos = []
             if len(campos) > 3: # Se tiver uma lista de destinos
                 for value in campos[3:]:
-                    lista_destinos = [int(value)]
+                    lista_destinos += [int(value)]
                     produtos.append(int(value))
             lojas[loja_id] = (x_coord, y_coord, lista_destinos)
     return lojas, produtos
