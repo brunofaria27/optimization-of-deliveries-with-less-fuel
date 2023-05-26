@@ -84,7 +84,7 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
 
 def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
     lista_rendimento_plotar = list()
-    lista_produtos = list()
+    lista_de_produtos = list()
 
     produtos_pegos = ListaLimitada(k_produtos)
     lojas_copy = copy.deepcopy(lojas)
@@ -113,14 +113,14 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
         xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
         distancia = calculaDistancia(xA, yA, xB, yB)
         lista_rendimento_plotar.append(distancia / rendimento)
-        lista_produtos.append(produtos_pegos.lista.copy())
-    return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_produtos, caminho
+        lista_de_produtos.append(produtos_pegos.lista.copy())
+    return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def branchAndBound(filename, k_produtos):
     PERMUTACOES.clear()
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
-    lojas, lista_produtos = fileTreatment.load_stores(filename)
-    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho = permutacoesBranchAndBound(lojas, lista_produtos, int(k_produtos))
+    lojas, lista_de_produtos = fileTreatment.load_stores(filename)
+    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho = permutacoesBranchAndBound(lojas, lista_de_produtos, int(k_produtos))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
