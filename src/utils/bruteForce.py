@@ -1,6 +1,7 @@
 # Bibliotecas do python
 import math
 import copy
+import time
 
 # Funções
 import utils.fileTreatment as fileTreatment
@@ -9,7 +10,10 @@ import interface.pathPlotting as plotting
 # Objetos
 from models.List import ListaLimitada
 
+# Globals
 PERMUTACOES = list()
+time_start = 0
+time_end = 0
 
 def calculaDistancia(xA, yA, xB, yB):
     return math.sqrt((xA - xB)**2 + (yA - yB)**2)
@@ -88,10 +92,13 @@ def calculaViagemTotal(lojas, caminho, k_produtos):
 
 def bruteForce(filename, k_produtos):
     PERMUTACOES.clear()
+    time_start = time.time() # Inicio da execução brute force
     lojas, _ = fileTreatment.load_stores(filename)
     melhor_caminho, lista_melhor_custo, lista_itens_caminhao = permutacoes(lojas, int(k_produtos))
+    time_end = time.time() # Fim da execução brute force
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
     print("Itens caminhão: " + str(lista_itens_caminhao))
     print("Número de permutações BRUTE FORCE: " + str(len(PERMUTACOES)))
+    print("Tempo de execução: " + str(time_end - time_start))
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)
