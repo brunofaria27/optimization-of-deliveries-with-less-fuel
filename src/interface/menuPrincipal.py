@@ -13,7 +13,7 @@ layout = [
     [sg.Text(" ", size=(90, 1), justification='center', font=("Helvetica", 15))],
     [[sg.Text("ESCOLHA ARQUIVO DE ENTRADA: ", font=("Helvetica", 15))]],
     [[sg.FileBrowse("ESCOLHER", font=("Helvetica", 15), key="-FILEBROWSE-")]],
-    [sg.Text("Quantidade de produtos máximo no caminhão: ", font=("Helvetica", 15)), sg.Input(key="-K_PRODUTOS-", font=("Helvetica", 15), size=(10,1), enable_events=True, justification='center', text_color='black', background_color='white')],
+    [sg.Text("QTDE MÁXIMA DE PRODUTOS NO CAMINHÃO: ", font=("Helvetica", 15)), sg.Input(key="-K_PRODUTOS-", font=("Helvetica", 15), size=(10,1), enable_events=True, justification='center', text_color='black', background_color='white')],
     [[sg.Text("ESCOLHA UM DOS ALGORÍTMOS: ", font=("Helvetica", 15)), sg.Button("FORÇA BRUTA", font=("Helvetica", 15)), sg.Button("BRANCH AND BOUND", font=("Helvetica", 15))]],
 ]
 

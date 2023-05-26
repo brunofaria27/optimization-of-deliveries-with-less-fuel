@@ -31,7 +31,7 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao
 
         # Atualize o gasto de combustível
         gasto_combustivel = sum(lista_melhor_custo[:frame])
-        ax.set_title(f"Gasto de Combustível: {gasto_combustivel:.2f} L")
+        ax.set_title(f"GASTO DE COMBUSTÍVEL: {gasto_combustivel:.2f} L")
 
         ax.set_xlabel("Coordenada X")
         ax.set_ylabel("Coordenada Y")
@@ -40,7 +40,7 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao
 
         # Adicione a legenda com o índice do array lista_itens_caminhao
         if frame < len(lista_itens_caminhao):
-            legenda = f"Produtos no caminhão: {lista_itens_caminhao[frame]}"
+            legenda = f"PRODUTOS NO CAMINHÃO: {lista_itens_caminhao[frame]}"
             ax.text(0.5, -0.1, legenda, transform=ax.transAxes, ha='center', fontsize=12)
     anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500) # Cria a animação frame por frame
     plt.show()
