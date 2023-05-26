@@ -8,7 +8,7 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao
     xC = []
     yC = []
 
-    for loja_id, loja_info in lojas.items():
+    for loja_info in lojas.items():
         x_coord, y_coord, _ = loja_info  
         xC.append(x_coord)
         yC.append(y_coord)
