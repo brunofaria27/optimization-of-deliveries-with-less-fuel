@@ -1,6 +1,7 @@
 # Bibliotecas do python
 import math
 import copy
+import time
 
 # Funções
 import utils.fileTreatment as fileTreatment
@@ -8,6 +9,20 @@ import interface.pathPlotting as plotting
 
 # Objetos
 from models.List import ListaLimitada
+
+# Globals
+PERMUTACOES = list()
+time_start = 0
+time_end = 0
+
+def calculaDistancia(xA, yA, xB, yB):
+    return math.sqrt((xA - xB)**2 + (yA - yB)**2)
+
+def verificaProdutosEntregues(lojas):
+    for entregas in lojas.values():
+        if entregas[2]:  # Verifica se a lista de entregas da loja não está vazia
+            return False
+    return True
 
 def permutacoes(lojas, k_produtos):
     lojas_filiais = list(lojas.keys())
@@ -23,7 +38,8 @@ def permutacoes(lojas, k_produtos):
 
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
-            itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_teste, caminho = calcula_viagem_total(lojas, caminho, int(k_produtos))
+            PERMUTACOES.append(caminho)
+            itens_caminhao, lojas_copy, lista_rendimento_plotar, lista_teste, caminho = calculaViagemTotal(lojas, caminho, int(k_produtos))
             if itens_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem = sum(lista_rendimento_plotar)
                 if custo_viagem < melhor_custo:
@@ -40,16 +56,7 @@ def permutacoes(lojas, k_produtos):
     generate_permutations(lojas_filiais, [0])
     return melhor_caminho, lista_melhor_custo, lista_itens_caminhao
 
-def calculate_distance(xA, yA, xB, yB):
-    return math.sqrt((xA - xB)**2 + (yA - yB)**2)
-
-def verificaProdutosEntregues(lojas):
-    for entregas in lojas.values():
-        if entregas[2]:  # Verifica se a lista de entregas da loja não está vazia
-            return False
-    return True
-
-def calcula_viagem_total(lojas, caminho, k_produtos):
+def calculaViagemTotal(lojas, caminho, k_produtos):
     lista_rendimento_plotar = list()
     lista_produtos = list()
 
@@ -78,18 +85,20 @@ def calcula_viagem_total(lojas, caminho, k_produtos):
                 
         xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
         xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
-        distancia = calculate_distance(xA, yA, xB, yB)
+        distancia = calculaDistancia(xA, yA, xB, yB)
         lista_rendimento_plotar.append(distancia / rendimento)
         lista_produtos.append(produtos_pegos.lista.copy())
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_produtos, caminho
 
 def bruteForce(filename, k_produtos):
-    lojas = fileTreatment.load_stores(filename)
+    PERMUTACOES.clear()
+    time_start = time.time() # Inicio da execução brute force
+    lojas, _ = fileTreatment.load_stores(filename)
     melhor_caminho, lista_melhor_custo, lista_itens_caminhao = permutacoes(lojas, int(k_produtos))
+    time_end = time.time() # Fim da execução brute force
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
     print("Itens caminhão: " + str(lista_itens_caminhao))
+    print("Número de permutações BRUTE FORCE: " + str(len(PERMUTACOES)))
+    print("Tempo de execução: " + str(time_end - time_start))
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)
-
-def branchAndBound(filename, k_produtos):
-    print("Branch and bound")
