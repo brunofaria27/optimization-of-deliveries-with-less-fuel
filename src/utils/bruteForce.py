@@ -24,7 +24,7 @@ def verificaProdutosEntregues(lojas):
             return False
     return True
 
-def permutacoes(lojas, k_produtos):
+def permutacoesBruteForce(lojas, k_produtos):
     lojas_filiais = list(lojas.keys())
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
 
@@ -39,7 +39,7 @@ def permutacoes(lojas, k_produtos):
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
             PERMUTACOES.append(caminho)
-            itens_caminhao_volta_origem, lojas_copy, lista_rendimento_plotar, lista_itens_caminhao_teste_de_custo, caminho = calculaViagemTotal(lojas, caminho, int(k_produtos))
+            itens_caminhao_volta_origem, lojas_copy, lista_rendimento_plotar, lista_itens_caminhao_teste_de_custo, caminho = calculaViagemTotalBruteForce(lojas, caminho, int(k_produtos))
             if itens_caminhao_volta_origem == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
                 if custo_viagem_atual < melhor_custo:
@@ -56,7 +56,7 @@ def permutacoes(lojas, k_produtos):
     generate_permutations(lojas_filiais, [0])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
 
-def calculaViagemTotal(lojas, caminho, k_produtos):
+def calculaViagemTotalBruteForce(lojas, caminho, k_produtos):
     lista_rendimento_plotar = list()
     lista_de_produtos = list()
 
@@ -94,7 +94,7 @@ def bruteForce(filename, k_produtos):
     PERMUTACOES.clear()
     time_start_bruteforce = time.time() # Inicio da execução brute force
     lojas, _ = fileTreatment.load_stores(filename)
-    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho = permutacoes(lojas, int(k_produtos))
+    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho = permutacoesBruteForce(lojas, int(k_produtos))
     time_end_bruteforce = time.time() # Fim da execução brute force
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
