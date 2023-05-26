@@ -28,7 +28,7 @@ time_end_branch_and_bound = 0
     (Evitar violação de restrição)
 """
 
-def podePassarVeinho(loja, produtos_caminhao, entregas):
+def podePassar(loja, produtos_caminhao, entregas):
     for produto in entregas:    # Todos os produtos a serem entregues
         if produto == loja:     # Caso exista entrega para a loja
             if loja in produtos_caminhao:
@@ -52,23 +52,23 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
     melhor_caminho = None
     melhor_custo = float('inf')
     lista_melhor_custo = None
-    lista_itens_caminhao = None
+    lista_itens_do_caminhao_total_caminho = None
 
 
     def generate_permutations(lista_lojas, permutacao_atual):
-        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_caminhao
+        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
 
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
             PERMUTACOES.append(caminho)
             qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, int(k_produtos))
             if qtd_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
-                custo_viagem = sum(lista_rendimento_plotar)
-                if custo_viagem < melhor_custo:
+                custo_viagem_atual = sum(lista_rendimento_plotar)
+                if custo_viagem_atual < melhor_custo:
                     melhor_caminho = caminho
-                    melhor_custo = custo_viagem
+                    melhor_custo = custo_viagem_atual
                     lista_melhor_custo = lista_rendimento_plotar
-                    lista_itens_caminhao = produtos_caminhao
+                    lista_itens_do_caminhao_total_caminho = produtos_caminhao
             return
 
         for i in range(len(lista_lojas)):
@@ -76,11 +76,11 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
             qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, permutacao_atual + [0], int(k_produtos))
             
-            if podePassarVeinho(loja_atual, produtos_caminhao[-1], entregas):
+            if podePassar(loja_atual, produtos_caminhao[-1], entregas):
                 generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
 
     generate_permutations(lojas_filiais, [0])
-    return melhor_caminho, lista_melhor_custo, lista_itens_caminhao
+    return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
 
 def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
     lista_rendimento_plotar = list()
@@ -120,11 +120,11 @@ def branchAndBound(filename, k_produtos):
     PERMUTACOES.clear()
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     lojas, lista_produtos = fileTreatment.load_stores(filename)
-    melhor_caminho, lista_melhor_custo, lista_itens_caminhao = permutacoesBranchAndBound(lojas, lista_produtos, int(k_produtos))
+    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho = permutacoesBranchAndBound(lojas, lista_produtos, int(k_produtos))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
-    print("Itens caminhão: " + str(lista_itens_caminhao))
+    print("Itens caminhão: " + str(lista_itens_do_caminhao_total_caminho))
     print("Número de permutações BRANCH AND BOUND: " + str(len(PERMUTACOES)))
     print("Tempo de execução: " + str(time_end_branch_and_bound - time_start_branch_and_bound))
-    plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)
+    plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho)
