@@ -12,15 +12,15 @@ from models.List import ListaLimitada
 
 # Globals
 PERMUTACOES = list()
-time_start = 0
-time_end = 0
+time_start_bruteforce = 0
+time_end_bruteforce = 0
 
 def calculaDistancia(xA, yA, xB, yB):
     return math.sqrt((xA - xB)**2 + (yA - yB)**2)
 
 def verificaProdutosEntregues(lojas):
-    for entregas in lojas.values():
-        if entregas[2]:  # Verifica se a lista de entregas da loja não está vazia
+    for entregas_da_loja in lojas.values():
+        if entregas_da_loja[2]:  # Verifica se a lista de entregas da loja não está vazia
             return False
     return True
 
@@ -92,13 +92,13 @@ def calculaViagemTotal(lojas, caminho, k_produtos):
 
 def bruteForce(filename, k_produtos):
     PERMUTACOES.clear()
-    time_start = time.time() # Inicio da execução brute force
+    time_start_bruteforce = time.time() # Inicio da execução brute force
     lojas, _ = fileTreatment.load_stores(filename)
     melhor_caminho, lista_melhor_custo, lista_itens_caminhao = permutacoes(lojas, int(k_produtos))
-    time_end = time.time() # Fim da execução brute force
+    time_end_bruteforce = time.time() # Fim da execução brute force
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
     print("Itens caminhão: " + str(lista_itens_caminhao))
     print("Número de permutações BRUTE FORCE: " + str(len(PERMUTACOES)))
-    print("Tempo de execução: " + str(time_end - time_start))
+    print("Tempo de execução: " + str(time_end_bruteforce - time_start_bruteforce))
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)
