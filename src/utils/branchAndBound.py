@@ -12,8 +12,8 @@ from models.List import ListaLimitada
 
 # Globals
 PERMUTACOES = list()
-time_start = 0
-time_end = 0
+time_start_branch_and_bound = 0
+time_end_branch_and_bound = 0
 
 """
     Começar na Loja 0
@@ -118,13 +118,13 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
 
 def branchAndBound(filename, k_produtos):
     PERMUTACOES.clear()
-    time_start = time.time() # Inicio da execução branch and bound
+    time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     lojas, lista_produtos = fileTreatment.load_stores(filename)
     melhor_caminho, lista_melhor_custo, lista_itens_caminhao = permutacoesBranchAndBound(lojas, lista_produtos, int(k_produtos))
-    time_end = time.time() # Fim da execução branch and bound
+    time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
     print("Itens caminhão: " + str(lista_itens_caminhao))
     print("Número de permutações BRANCH AND BOUND: " + str(len(PERMUTACOES)))
-    print("Tempo de execução: " + str(time_end - time_start))
+    print("Tempo de execução: " + str(time_end_branch_and_bound - time_start_branch_and_bound))
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao)

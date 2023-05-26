@@ -36,10 +36,6 @@ def permutacoes(lojas, k_produtos):
     def generate_permutations(lista_lojas, permutacao_atual):
         nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho # Atribuir valores a variáveis do escopo externo
 
-
-# itens caminhão = quantidade de itens do caminhão do ultimo ponto para a volta a origem
-#  lista_itens_caminhao = todo o log de itens pegos durante o caminho
-
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
             PERMUTACOES.append(caminho)
