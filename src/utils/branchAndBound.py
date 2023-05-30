@@ -74,8 +74,8 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
         for i in range(len(lista_lojas)):
             loja_atual = lista_lojas[i]
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
+
             produtos_caminhao = pegaProdutosCaminhaoAtuais(lojas, permutacao_atual + [0], int(k_produtos))
-            
             if podePassar(loja_atual, produtos_caminhao[-1], entregas):
                 generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
 
@@ -100,6 +100,7 @@ def pegaProdutosCaminhaoAtuais(lojas, caminho, k_produtos):
             if len(produtos_loja) != []:
                 for produto in produtos_loja:
                     produtos_pegos.adicionar(produto) # Só adiciona se a lista não estiver cheia
+                produtos_loja.clear()
         lista_de_produtos.append(produtos_pegos.lista.copy())
     return lista_de_produtos
 
