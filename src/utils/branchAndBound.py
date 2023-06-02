@@ -28,7 +28,7 @@ time_end_branch_and_bound = 0
     (Evitar violação de restrição)
 """
 
-def podePassar(loja, produtos_caminhao, entregas):
+def isRamoValido(loja, produtos_caminhao, entregas):
     for produto in entregas:    # Todos os produtos a serem entregues
         if produto == loja:     # Caso exista entrega para a loja
             if loja in produtos_caminhao:
@@ -76,7 +76,7 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
 
             produtos_caminhao = pegaProdutosCaminhaoAtuais(lojas, permutacao_atual + [0], int(k_produtos))
-            if podePassar(loja_atual, produtos_caminhao[-1], entregas):
+            if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
                 generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
 
     generate_permutations(lojas_filiais, [0])
