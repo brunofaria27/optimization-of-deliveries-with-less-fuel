@@ -11,7 +11,6 @@ import interface.pathPlotting as plotting
 from models.List import ListaLimitada
 
 # Globals
-PERMUTACOES = list()
 time_start_bruteforce = 0
 time_end_bruteforce = 0
 
@@ -25,6 +24,8 @@ def verificaProdutosEntregues(lojas):
     return True
 
 def permutacoesBruteForce(lojas, k_produtos):
+    PERMUTACOES = 0
+
     lojas_filiais = list(lojas.keys())
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
 
@@ -34,11 +35,11 @@ def permutacoesBruteForce(lojas, k_produtos):
     lista_itens_do_caminhao_total_caminho = None
 
     def generate_permutations(lista_lojas, permutacao_atual):
-        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho # Atribuir valores a variáveis do escopo externo
+        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES # Atribuir valores a variáveis do escopo externo
 
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
-            PERMUTACOES.append(1)
+            PERMUTACOES += 1
             itens_caminhao_volta_origem, lojas_copy, lista_rendimento_plotar, lista_itens_caminhao_teste_de_custo, caminho = calculaViagemTotalBruteForce(lojas, caminho, int(k_produtos))
             if itens_caminhao_volta_origem == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
@@ -54,7 +55,7 @@ def permutacoesBruteForce(lojas, k_produtos):
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
             generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
     generate_permutations(lojas_filiais, [0])
-    return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
+    return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES
 
 def calculaViagemTotalBruteForce(lojas, caminho, k_produtos):
     lista_rendimento_plotar = list()
@@ -91,18 +92,17 @@ def calculaViagemTotalBruteForce(lojas, caminho, k_produtos):
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def bruteForce(filename, k_produtos):
-    PERMUTACOES.clear()
     time_start_bruteforce = time.time() # Inicio da execução brute force
     lojas, _ = deliveryAnalyzer.load_stores(filename)
     k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
     if int(k_produtos) < k_valido or int(k_produtos) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
-    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho = permutacoesBruteForce(lojas, int(k_produtos))
+    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES = permutacoesBruteForce(lojas, int(k_produtos))
     time_end_bruteforce = time.time() # Fim da execução brute force
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
     print("Itens caminhão: " + str(lista_itens_do_caminhao_total_caminho))
-    print("Número de permutações BRUTE FORCE: " + str(len(PERMUTACOES)))
+    print("Número de permutações BRUTE FORCE: " + str(PERMUTACOES))
     print("Tempo de execução: " + str(time_end_bruteforce - time_start_bruteforce))
-    print("Permutações por seg: " + str(len(PERMUTACOES) / (time_end_bruteforce - time_start_bruteforce)))
+    print("Permutações por seg: " + str(PERMUTACOES / (time_end_bruteforce - time_start_bruteforce)))
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho)

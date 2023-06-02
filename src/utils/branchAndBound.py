@@ -22,7 +22,7 @@ time_end_branch_and_bound = 0
     Função: (Somatório das duas menores arestas adjacentes a cada vértice restante) / 2
     Para cada loja visitada, remover a anterior do somatório e a segunda menor aresta da atual
     0 -> 1 -> 2 -> ... , remove umas das arestas de 0 e 1, depois uma de 1 e 2, e assim por diante
-    """
+"""
 
 def isRamoValido(loja, produtos_caminhao, entregas):
     for produto in entregas:    # Todos os produtos a serem entregues
@@ -42,6 +42,9 @@ def verificaProdutosEntregues(lojas):
     return True
 
 def permutacoesBranchAndBound(lojas, entregas, k_produtos):
+    PERMUTACOES = 0
+    PODAS = 0
+
     lojas_filiais = list(lojas.keys())
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
 
@@ -51,11 +54,11 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
     lista_itens_do_caminhao_total_caminho = None
 
     def generate_permutations(lista_lojas, permutacao_atual):
-        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
+        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
-            PERMUTACOES.append(1)
+            PERMUTACOES += 1
             qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, int(k_produtos))
             if qtd_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
@@ -75,12 +78,11 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
                 if sum(lower_bound_atual) < melhor_custo:
                     generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
                 else:
-                    PODAS.append(1)
+                    PODAS += 1
             else:
-                PODAS.append(1)
-
+                PODAS += 1
     generate_permutations(lojas_filiais, [0])
-    return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
+    return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
 def pegaProdutosCaminhaoAtuais(lojas, caminho, k_produtos):
     lista_de_produtos = list()
@@ -139,20 +141,18 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def branchAndBound(filename, k_produtos):
-    PERMUTACOES.clear() # Reiniciar valores em "cache" com clear()
-    PODAS.clear()
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     lojas, lista_de_produtos = deliveryAnalyzer.load_stores(filename)
     k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
     if int(k_produtos) < k_valido or int(k_produtos) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
-    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho = permutacoesBranchAndBound(lojas, lista_de_produtos, int(k_produtos))
+    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBound(lojas, lista_de_produtos, int(k_produtos))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
     print("Itens caminhão: " + str(lista_itens_do_caminhao_total_caminho))
-    print("Número de permutações BRANCH AND BOUND: " + str(len(PERMUTACOES)))
-    print("Número de podas BRANCH AND BOUND: " + str(len(PODAS)))
+    print("Número de permutações BRANCH AND BOUND: " + str(PERMUTACOES))
+    print("Número de podas BRANCH AND BOUND: " + str(PODAS))
     print("Tempo de execução: " + str(time_end_branch_and_bound - time_start_branch_and_bound))
-    print("Podas por seg: " + str(len(PODAS) / (time_end_branch_and_bound - time_start_branch_and_bound)))
+    print("Podas por seg: " + str(PODAS / (time_end_branch_and_bound - time_start_branch_and_bound)))
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho)
