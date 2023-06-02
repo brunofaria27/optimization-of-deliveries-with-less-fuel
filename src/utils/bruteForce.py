@@ -91,7 +91,7 @@ def calculaViagemTotalBruteForce(lojas, caminho, k_produtos):
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def bruteForce(filename, k_produtos):
-    PERMUTACOES = 0
+    PERMUTACOES.clear()
     time_start_bruteforce = time.time() # Inicio da execução brute force
     lojas, _ = deliveryAnalyzer.load_stores(filename)
     k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
