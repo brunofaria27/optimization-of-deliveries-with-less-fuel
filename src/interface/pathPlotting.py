@@ -16,6 +16,7 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao
     plt.scatter(xC, yC)
 
     def update(frame):
+        nonlocal anim_running
         time.sleep(0.5)
         ax.clear()
         ax.scatter(xC, yC)
@@ -42,5 +43,11 @@ def plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_caminhao
         if frame < len(lista_itens_caminhao):
             legenda = f"PRODUTOS NO CAMINHÃO: {lista_itens_caminhao[frame]}"
             ax.text(0.5, -0.1, legenda, transform=ax.transAxes, ha='center', fontsize=12)
+
+        # Descomente o código abaixo para a animação não ficar em looping 
+        # if frame == len(melhor_caminho) - 1:
+            # anim.event_source.stop()
+            # anim_running = False
+    anim_running = True
     anim = animation.FuncAnimation(fig, update, frames=len(melhor_caminho), interval=500) # Cria a animação frame por frame
     plt.show()
