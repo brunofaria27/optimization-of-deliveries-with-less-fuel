@@ -16,6 +16,14 @@ PODAS = list()
 time_start_branch_and_bound = 0
 time_end_branch_and_bound = 0
 
+"""
+    Criar um método para calculo do Lower Bound baseado na situação atual
+    LB = combustivel gasto até etapa atual + combustivel teoricamente gasto até fim
+    Função: (Somatório das duas menores arestas adjacentes a cada vértice restante) / 2
+    Para cada loja visitada, remover a anterior do somatório e a segunda menor aresta da atual
+    0 -> 1 -> 2 -> ... , remove umas das arestas de 0 e 1, depois uma de 1 e 2, e assim por diante
+    """
+
 def isRamoValido(loja, produtos_caminhao, entregas):
     for produto in entregas:    # Todos os produtos a serem entregues
         if produto == loja:     # Caso exista entrega para a loja
