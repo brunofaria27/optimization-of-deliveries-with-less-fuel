@@ -74,10 +74,11 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
         for i in range(len(lista_lojas)):
             loja_atual = lista_lojas[i]
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
+            _, _, lower_bound_atual, produtos_caminhao, _  = calculaViagemTotalBranchAndBound(lojas, permutacao_atual + [0], int(k_produtos))
 
-            produtos_caminhao = pegaProdutosCaminhaoAtuais(lojas, permutacao_atual + [0], int(k_produtos))
             if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
-                generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
+                if sum(lower_bound_atual) < melhor_custo:
+                    generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
 
     generate_permutations(lojas_filiais, [0])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
