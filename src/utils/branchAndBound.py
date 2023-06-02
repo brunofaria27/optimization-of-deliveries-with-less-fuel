@@ -11,8 +11,8 @@ import interface.pathPlotting as plotting
 from models.List import ListaLimitada
 
 # Globals
-PERMUTACOES = 0
-PODAS = 0
+PERMUTACOES = list()
+PODAS = list()
 time_start_branch_and_bound = 0
 time_end_branch_and_bound = 0
 
@@ -42,13 +42,12 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
     lista_melhor_custo = None
     lista_itens_do_caminhao_total_caminho = None
 
-
     def generate_permutations(lista_lojas, permutacao_atual):
         nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
 
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
-            PERMUTACOES += 1
+            PERMUTACOES.append(1)
             qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, int(k_produtos))
             if qtd_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
@@ -68,10 +67,9 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
                 if sum(lower_bound_atual) < melhor_custo:
                     generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
                 else:
-                    PODAS += 1
+                    PODAS.append(1)
             else:
-                PODAS += 1
-
+                PODAS.append(1)
 
     generate_permutations(lojas_filiais, [0])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho
@@ -133,8 +131,8 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def branchAndBound(filename, k_produtos):
-    PERMUTACOES = 0
-    PODAS = 0
+    PERMUTACOES.clear() # Reiniciar valores em "cache" com clear()
+    PODAS.clear()
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     lojas, lista_de_produtos = deliveryAnalyzer.load_stores(filename)
     k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
@@ -145,8 +143,8 @@ def branchAndBound(filename, k_produtos):
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
     print("Itens caminhão: " + str(lista_itens_do_caminhao_total_caminho))
-    print("Número de permutações BRANCH AND BOUND: " + str(PERMUTACOES))
-    print("Número de podas BRANCH AND BOUND: " + str(PODAS))
+    print("Número de permutações BRANCH AND BOUND: " + str(len(PERMUTACOES)))
+    print("Número de podas BRANCH AND BOUND: " + str(len(PODAS)))
     print("Tempo de execução: " + str(time_end_branch_and_bound - time_start_branch_and_bound))
-    print("Podas por seg: " + str((PODAS) / (time_end_branch_and_bound - time_start_branch_and_bound)))
+    print("Podas por seg: " + str(len(PODAS) / (time_end_branch_and_bound - time_start_branch_and_bound)))
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho)
