@@ -13,3 +13,8 @@ def load_stores(filename):
                     produtos.append(int(value))
             lojas[loja_id] = (x_coord, y_coord, lista_destinos)
     return lojas, produtos
+
+def pegarNumeroMaximoLojas(lojas):
+    listas_entregas = [entregas[2] for entregas in lojas.values()]
+    comprimento_maximo = max(len(entregas) for entregas in listas_entregas)
+    return comprimento_maximo
