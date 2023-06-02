@@ -15,19 +15,6 @@ PERMUTACOES = list()
 time_start_branch_and_bound = 0
 time_end_branch_and_bound = 0
 
-"""
-    Começar na Loja 0
-    FAZER ATÉ ACABAR
-    Encontrar a loja mais proxima a partir dessa
-    Conferir se há item a ser entregue nessa loja
-    SE NÃO, prosseguir com essa loja
-    SE SIM, confere se o item está no caminhão:
-        SE SIM, prosseguir com essa loja
-        SE NÃO, procurar outra loja mais próxima
-    
-    (Evitar violação de restrição)
-"""
-
 def isRamoValido(loja, produtos_caminhao, entregas):
     for produto in entregas:    # Todos os produtos a serem entregues
         if produto == loja:     # Caso exista entrega para a loja
