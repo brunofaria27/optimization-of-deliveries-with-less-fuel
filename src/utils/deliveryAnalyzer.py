@@ -18,7 +18,3 @@ def pegarNumeroMaximoLojas(lojas):
     listas_entregas = [entregas[2] for entregas in lojas.values()]
     comprimento_maximo = max(len(entregas) for entregas in listas_entregas)
     return comprimento_maximo
-
-"""
-    Criar metodo para retornar 2 menores arestas pra cada vertice
-    """
