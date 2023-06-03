@@ -11,8 +11,6 @@ import interface.pathPlotting as plotting
 from models.List import ListaLimitada
 
 # Globals
-PERMUTACOES = list()
-PODAS = list()
 time_start_branch_and_bound = 0
 time_end_branch_and_bound = 0
 
