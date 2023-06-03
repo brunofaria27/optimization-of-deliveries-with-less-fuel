@@ -131,11 +131,11 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def branchAndBound(filename, k_produtos):
-    time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     lojas, lista_de_produtos = deliveryAnalyzer.load_stores(filename)
     k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
     if int(k_produtos) < k_valido or int(k_produtos) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
+    time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBound(lojas, lista_de_produtos, int(k_produtos))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     print("Melhor caminho: " + str(melhor_caminho))

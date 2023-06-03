@@ -92,11 +92,11 @@ def calculaViagemTotalBruteForce(lojas, caminho, k_produtos):
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def bruteForce(filename, k_produtos):
-    time_start_bruteforce = time.time() # Inicio da execução brute force
     lojas, _ = deliveryAnalyzer.load_stores(filename)
     k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
     if int(k_produtos) < k_valido or int(k_produtos) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
+    time_start_bruteforce = time.time() # Inicio da execução brute force
     melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES = permutacoesBruteForce(lojas, int(k_produtos))
     time_end_bruteforce = time.time() # Fim da execução brute force
     print("Melhor caminho: " + str(melhor_caminho))
