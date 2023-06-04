@@ -22,15 +22,6 @@ def isRamoValido(loja, produtos_caminhao, entregas):
             return False
     return True
 
-def destinoProdutoJaEntregue(loja_destino, lista_produtos):
-    return loja_destino in lista_produtos
-
-def temProdutosRestantes(lojas_copy, caminho_atual):
-    for loja in caminho_atual:
-        if loja != 0 and lojas_copy[loja][2]:
-            return True
-    return False
-
 def verificaProdutosEntregues(lojas):
     for entregas in lojas.values():
         if entregas[2]:  # Verifica se a lista de entregas da loja não está vazia
