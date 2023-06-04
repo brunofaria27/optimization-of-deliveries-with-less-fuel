@@ -28,6 +28,55 @@ def verificaProdutosEntregues(lojas):
             return False
     return True
 
+def permutacoesBranchAndBoundTriangulacao(lojas, entregas, matriz_distancias, k_produtos):
+    PERMUTACOES = 0
+    PODAS = 0
+
+    lojas_filiais = list(lojas.keys())
+    lojas_filiais.remove(0)  # Origem e destino não entram na permutação
+    lojas_lb = copy.deepcopy(lojas)
+    del lojas_lb[0]
+
+    melhor_caminho = None
+    melhor_custo = float('inf')
+    lista_melhor_custo = None
+    lista_itens_do_caminhao_total_caminho = None
+
+    def generate_permutations(lista_lojas, permutacao_atual, lojas_lb, ultimo_rendimento):
+        nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
+
+        if len(lista_lojas) == 0:
+            caminho = permutacao_atual + [0]
+            PERMUTACOES += 1
+            qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, int(k_produtos), ultimo_rendimento)
+            if qtd_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
+                custo_viagem_atual = sum(lista_rendimento_plotar)
+                if custo_viagem_atual < melhor_custo:
+                    melhor_caminho = caminho
+                    melhor_custo = custo_viagem_atual
+                    lista_melhor_custo = lista_rendimento_plotar
+                    lista_itens_do_caminhao_total_caminho = produtos_caminhao
+            return
+
+        for i in range(len(lista_lojas)):
+            loja_atual = lista_lojas[i]
+            elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
+            _, _, consumo_combustivel_atual, produtos_caminhao, _  = calculaViagemTotalBranchAndBound(lojas, permutacao_atual + [loja_atual], matriz_distancias, int(k_produtos), ultimo_rendimento)
+            if consumo_combustivel_atual is not None: custo_atual = sum(consumo_combustivel_atual)
+            if consumo_combustivel_atual is not None and (melhor_caminho == None or melhor_custo > custo_atual):
+                if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
+                    del lojas_lb[loja_atual]
+                    somatorio = deliveryAnalyzer.pegarMenoresArestas(lojas_lb, matriz_distancias)
+                    lower_bound = custo_atual + somatorio
+                    if lower_bound * (0.95) < melhor_custo:
+                        generate_permutations(elementos_restantes, permutacao_atual + [loja_atual], lojas_lb, consumo_combustivel_atual)
+                    else: PODAS += 1
+                    lojas_lb[loja_atual] = (lojas[loja_atual][0], lojas[loja_atual][1], lojas[loja_atual][2])
+                else: PODAS += 1
+            else: PODAS += 1
+    generate_permutations(lojas_filiais, [0], lojas_lb, [[]])
+    return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
+
 def permutacoesBranchAndBound(lojas, entregas, matriz_distancias, k_produtos):
     PERMUTACOES = 0
     PODAS = 0
@@ -109,14 +158,17 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produt
         lista_de_produtos.append(produtos_pegos.lista.copy())
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
-def branchAndBound(filename, k_produtos):
+def branchAndBound(filename, k_produtos, isTriangulacao):
     lojas, lista_de_produtos = deliveryAnalyzer.load_stores(filename)
     k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
     if int(k_produtos) < k_valido or int(k_produtos) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     matriz_distancias = deliveryAnalyzer.preCalcularMatrizDistancias(lojas)
-    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBound(lojas, lista_de_produtos, matriz_distancias, int(k_produtos))
+    if isTriangulacao:
+        melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundTriangulacao(lojas, lista_de_produtos, matriz_distancias, int(k_produtos))
+    else:
+        melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBound(lojas, lista_de_produtos, matriz_distancias, int(k_produtos))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     if melhor_caminho != None:
         print("Melhor caminho: " + str(melhor_caminho))

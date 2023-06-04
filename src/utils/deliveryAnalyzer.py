@@ -36,3 +36,24 @@ def preCalcularMatrizDistancias(lojas):
             distancia = calculaDistancia(float(xA), float(yA), float(xB), float(yB))
             matriz_distancias[i][j] = distancia
     return matriz_distancias
+
+def pegarMenoresArestas(lojas, matriz_distancias):
+    if len(lojas) >= 3:
+        menores_arestas = {}
+
+        for loja_id, _ in lojas.items():
+            distancias = []
+            for proxima_loja_id, _ in lojas.items():
+                if loja_id != proxima_loja_id:
+                    distancia = matriz_distancias[loja_id][proxima_loja_id]
+                    distancias.append((proxima_loja_id, distancia))
+            distancias.sort(key=lambda x: x[1])
+            menores_arestas[loja_id] = [x[1] for x in distancias[:2]]
+            calculo_lower = sum(sum(distancias) for distancias in menores_arestas.values())
+        return (calculo_lower / 20)
+    elif len(lojas) > 1:
+        comb = [(loja_id, proxima_loja_id) for loja_id in lojas for proxima_loja_id in lojas if loja_id != proxima_loja_id]
+        for loja_id, proxima_loja_id in comb:
+            distancia = matriz_distancias[loja_id][proxima_loja_id] 
+        return (distancia / 10)
+    return 0.0
