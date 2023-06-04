@@ -5,14 +5,14 @@ def load_stores(filename):
     produtos = []
     with open(filename) as arquivo_entrada:
         for linha in arquivo_entrada:
-            campos_linha = linha.split()
-            loja_id = int(campos_linha[0])
-            x_coord, y_coord = int(campos_linha[1]), int(campos_linha[2])
+            campos_linha = linha.split() #divide as informações das linhas do arquivo de entrada
+            loja_id = int(campos_linha[0]) #id é sempre a primeira posicao da linha
+            x_coord, y_coord = int(campos_linha[1]), int(campos_linha[2]) #coordenadas x e y da loja filial
             lista_destinos = []
             if len(campos_linha) > 3: # Se tiver uma lista de destinos
                 for value in campos_linha[3:]:
                     lista_destinos += [int(value)]
-                    produtos.append(int(value))
+                    produtos.append(int(value)) #pega quais produtos serao entregues
             lojas[loja_id] = (x_coord, y_coord, lista_destinos)
     return lojas, produtos
 
@@ -50,7 +50,7 @@ def pegarMenoresArestas(lojas, matriz_distancias):
             distancias.sort(key=lambda x: x[1])
             menores_arestas[loja_id] = [x[1] for x in distancias[:2]]
             calculo_lower = sum(sum(distancias) for distancias in menores_arestas.values())
-        return (calculo_lower / 20)
+        return (calculo_lower / 20) # divide por 2 e por 10, que é o rendimento do combustivel padrao
     elif len(lojas) > 1:
         comb = [(loja_id, proxima_loja_id) for loja_id in lojas for proxima_loja_id in lojas if loja_id != proxima_loja_id]
         for loja_id, proxima_loja_id in comb:
