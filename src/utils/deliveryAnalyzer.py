@@ -35,5 +35,4 @@ def preCalcularMatrizDistancias(lojas):
             xB, yB = lojas[j][0], lojas[j][1]
             distancia = calculaDistancia(float(xA), float(yA), float(xB), float(yB))
             matriz_distancias[i][j] = distancia
-
     return matriz_distancias

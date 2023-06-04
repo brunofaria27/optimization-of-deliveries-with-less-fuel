@@ -95,10 +95,11 @@ def bruteForce(filename, k_produtos):
     matriz_distancias = deliveryAnalyzer.preCalcularMatrizDistancias(lojas)
     melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES = permutacoesBruteForce(lojas, matriz_distancias, int(k_produtos))
     time_end_bruteforce = time.time() # Fim da execução brute force
-    print("Melhor caminho: " + str(melhor_caminho))
-    print("Custo total distância: " + str(sum(lista_melhor_custo)))
-    print("Itens caminhão: " + str(lista_itens_do_caminhao_total_caminho))
-    print("Número de permutações BRUTE FORCE: " + str(PERMUTACOES))
-    print("Tempo de execução: " + str(time_end_bruteforce - time_start_bruteforce))
-    print("Permutações por seg: " + str(PERMUTACOES / (time_end_bruteforce - time_start_bruteforce)))
+    if melhor_caminho != None:
+        print("Melhor caminho: " + str(melhor_caminho))
+        print("Custo total distância: " + str(sum(lista_melhor_custo)))
+        print("Itens caminhão: " + str(lista_itens_do_caminhao_total_caminho))
+        print("Número de permutações BRUTE FORCE: " + str(PERMUTACOES))
+        print("Tempo de execução: " + str(time_end_bruteforce - time_start_bruteforce))
+    else: print('Entrada inválida, nenhum caminho encontrado.')
     plotting.plotBestTrip(lojas, melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho)
