@@ -74,28 +74,6 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
     generate_permutations(lojas_filiais, [0])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
-def pegaProdutosCaminhaoAtuais(lojas, caminho, k_produtos):
-    lista_de_produtos = list()
-    produtos_pegos = ListaLimitada(k_produtos)
-
-    for loja in range(len(caminho) - 1):
-        if caminho[loja] != 0:
-            produtos_loja = lojas[caminho[loja]][2].copy()
-
-            # Verificar se tem entrega
-            if caminho[loja] in produtos_pegos.lista:
-                for entrega in produtos_pegos.lista.copy():
-                    if entrega == caminho[loja]:
-                        produtos_pegos.remover_por_valor(caminho[loja])
-            
-            # Pegar produtos
-            if len(produtos_loja) != []:
-                for produto in produtos_loja:
-                    produtos_pegos.adicionar(produto) # Só adiciona se a lista não estiver cheia
-                produtos_loja.clear()
-        lista_de_produtos.append(produtos_pegos.lista.copy())
-    return lista_de_produtos
-
 def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
     lista_rendimento_plotar = list()
     lista_de_produtos = list()
