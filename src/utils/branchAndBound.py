@@ -49,13 +49,13 @@ def permutacoesBranchAndBound(lojas, entregas, matriz_distancias, k_produtos):
     lista_melhor_custo = None
     lista_itens_do_caminhao_total_caminho = None
 
-    def generate_permutations(lista_lojas, permutacao_atual):
+    def generate_permutations(lista_lojas, permutacao_atual, ultimo_rendimento):
         nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
             PERMUTACOES += 1
-            qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, int(k_produtos))
+            qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, int(k_produtos), ultimo_rendimento)
             if qtd_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
                 if custo_viagem_atual < melhor_custo:
@@ -68,17 +68,19 @@ def permutacoesBranchAndBound(lojas, entregas, matriz_distancias, k_produtos):
         for i in range(len(lista_lojas)):
             loja_atual = lista_lojas[i]
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
-            _, _, rendimento_viagem, produtos_caminhao, _  = calculaViagemTotalBranchAndBound(lojas, permutacao_atual + [loja_atual], matriz_distancias, int(k_produtos))
-            lower_bound_atual = sum(rendimento_viagem)
-            if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
-                if lower_bound_atual < melhor_custo:
-                    generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
+            _, _, consumo_combustivel_atual, produtos_caminhao, _  = calculaViagemTotalBranchAndBound(lojas, permutacao_atual + [loja_atual], matriz_distancias, int(k_produtos), ultimo_rendimento)
+            if consumo_combustivel_atual is not None: lower_bound_atual = sum(consumo_combustivel_atual)
+            if consumo_combustivel_atual is not None and (melhor_caminho == None or melhor_custo > lower_bound_atual):
+                if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
+                    if lower_bound_atual < melhor_custo:
+                        generate_permutations(elementos_restantes, permutacao_atual + [loja_atual], consumo_combustivel_atual)
+                    else: PODAS += 1
                 else: PODAS += 1
             else: PODAS += 1
-    generate_permutations(lojas_filiais, [0])
+    generate_permutations(lojas_filiais, [0], [[]])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
-def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produtos):
+def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produtos, ultimo_rendimento):
     lista_rendimento_plotar = []
     lista_de_produtos = []
 
@@ -87,6 +89,11 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produt
     rendimento = 10
 
     for loja in range(len(caminho) - 1):
+        for i in range(len(ultimo_rendimento)):
+            try:
+                if ultimo_rendimento[i] < lista_rendimento_plotar[i]: return None, None, None, None, None
+            except: continue
+
         if caminho[loja] != 0:
             produtos_loja = lojas_copy[caminho[loja]][2].copy()
 
@@ -103,6 +110,7 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produt
                     if produtos_pegos.adicionar(produto):
                         lojas_copy[caminho[loja]][2].remove(produto)
                         rendimento -= 0.5
+                    else: return None, None, None, None, None
                 produtos_loja.clear()
                 
         distancia = matriz_distancias[caminho[loja]][caminho[loja + 1]]
