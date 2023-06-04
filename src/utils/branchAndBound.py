@@ -77,7 +77,7 @@ def permutacoesBranchAndBoundTriangulacao(lojas, entregas, matriz_distancias, k_
     generate_permutations(lojas_filiais, [0], lojas_lb, [[]])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
-def permutacoesBranchAndBound(lojas, entregas, matriz_distancias, k_produtos_caminhao):
+def permutacoesBranchAndBoundNormal(lojas, entregas, matriz_distancias, k_produtos_caminhao):
     PERMUTACOES = 0
     PODAS = 0
 
@@ -168,7 +168,7 @@ def branchAndBound(filename, k_produtos_caminhao, isTriangulacao):
     if isTriangulacao:
         melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundTriangulacao(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
     else:
-        melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBound(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
+        melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundNormal(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     if melhor_caminho != None:
         print("Melhor caminho: " + str(melhor_caminho))
