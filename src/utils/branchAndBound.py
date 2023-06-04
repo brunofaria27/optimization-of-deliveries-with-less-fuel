@@ -17,7 +17,7 @@ time_end_branch_and_bound = 0
 def isRamoValido(loja, produtos_caminhao, entregas):
     for produto in entregas:    # Todos os produtos a serem entregues
         if produto == loja:     # Caso exista entrega para a loja
-            if loja in produtos_caminhao:
+            if loja in produtos_caminhao: #confere se tem o produto daquela loja no caminhao
                 return True
             return False
     return True
@@ -32,7 +32,7 @@ def permutacoesBranchAndBoundTriangulacao(lojas, entregas, matriz_distancias, k_
     PERMUTACOES = 0
     PODAS = 0
 
-    lojas_filiais = list(lojas.keys())
+    lojas_filiais = list(lojas.keys()) #ids das lojas
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
     lojas_lb = copy.deepcopy(lojas)
     del lojas_lb[0]
@@ -40,14 +40,14 @@ def permutacoesBranchAndBoundTriangulacao(lojas, entregas, matriz_distancias, k_
     melhor_caminho = None
     melhor_custo = float('inf')
     lista_melhor_custo = None
-    lista_itens_do_caminhao_total_caminho = None
+    lista_itens_do_caminhao_total_caminho = None #tudo zerado, para ser substituido depois
 
     def generate_permutations(lista_lojas, permutacao_atual, lojas_lb, ultimo_rendimento):
         nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
-            PERMUTACOES += 1
+            PERMUTACOES += 1 #controle de quantidade de permutacoes
             qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, int(k_produtos_caminhao), ultimo_rendimento)
             if qtd_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
@@ -70,9 +70,9 @@ def permutacoesBranchAndBoundTriangulacao(lojas, entregas, matriz_distancias, k_
                     lower_bound = custo_atual + somatorio
                     if lower_bound * (0.95) < melhor_custo:
                         generate_permutations(elementos_restantes, permutacao_atual + [loja_atual], lojas_lb, consumo_combustivel_atual)
-                    else: PODAS += 1
+                    else: PODAS += 1 #se nao for melhor que o melhor custo, poda ele
                     lojas_lb[loja_atual] = (lojas[loja_atual][0], lojas[loja_atual][1], lojas[loja_atual][2])
-                else: PODAS += 1
+                else: PODAS += 1 #se o ramo nao e valido, poda ele
             else: PODAS += 1
     generate_permutations(lojas_filiais, [0], lojas_lb, [[]])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
@@ -81,13 +81,13 @@ def permutacoesBranchAndBoundNormal(lojas, entregas, matriz_distancias, k_produt
     PERMUTACOES = 0
     PODAS = 0
 
-    lojas_filiais = list(lojas.keys())
+    lojas_filiais = list(lojas.keys()) #ids das lojas
     lojas_filiais.remove(0)  # Origem e destino não entram na permutação
 
     melhor_caminho = None
     melhor_custo = float('inf')
     lista_melhor_custo = None
-    lista_itens_do_caminhao_total_caminho = None
+    lista_itens_do_caminhao_total_caminho = None #tudo zerado, para ser substituido depois
 
     def generate_permutations(lista_lojas, permutacao_atual, ultimo_rendimento):
         nonlocal melhor_caminho, melhor_custo, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
@@ -114,8 +114,8 @@ def permutacoesBranchAndBoundNormal(lojas, entregas, matriz_distancias, k_produt
                 if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
                     if lower_bound_atual < melhor_custo: #condicao de poda do branch and bound, usando lower bound
                         generate_permutations(elementos_restantes, permutacao_atual + [loja_atual], consumo_combustivel_atual)
-                    else: PODAS += 1
-                else: PODAS += 1
+                    else: PODAS += 1 #se nao for melhor que o melhor custo, poda ele
+                else: PODAS += 1 #se nao e valido, poda ele
             else: PODAS += 1
     generate_permutations(lojas_filiais, [0], [[]])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
