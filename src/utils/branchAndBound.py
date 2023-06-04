@@ -112,7 +112,7 @@ def permutacoesBranchAndBoundNormal(lojas, entregas, matriz_distancias, k_produt
             if consumo_combustivel_atual is not None: lower_bound_atual = sum(consumo_combustivel_atual)
             if consumo_combustivel_atual is not None and (melhor_caminho == None or melhor_custo > lower_bound_atual):
                 if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
-                    if lower_bound_atual < melhor_custo:
+                    if lower_bound_atual < melhor_custo: #condicao de poda do branch and bound, usando lower bound
                         generate_permutations(elementos_restantes, permutacao_atual + [loja_atual], consumo_combustivel_atual)
                     else: PODAS += 1
                 else: PODAS += 1
@@ -124,9 +124,9 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produt
     lista_rendimento_plotar = []
     lista_de_produtos = []
 
-    produtos_pegos = ListaLimitada(k_produtos_caminhao)
+    produtos_pegos = ListaLimitada(k_produtos_caminhao) #so pode pegar quantidades até o numero k determinado no inicio da execucao
     lojas_copy = copy.deepcopy(lojas)
-    rendimento_combustivel = 10
+    rendimento_combustivel = 10 #padrao do problema
 
     for loja in range(len(caminho) - 1):
         for i in range(len(ultimo_rendimento)):
@@ -135,7 +135,7 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produt
             except: continue
 
         if caminho[loja] != 0:
-            produtos_loja = lojas_copy[caminho[loja]][2].copy()
+            produtos_loja = lojas_copy[caminho[loja]][2].copy() #copia os produtos da loja, caso ela exista
 
             # Verificar se tem entrega
             if caminho[loja] in produtos_pegos.lista:
@@ -154,18 +154,18 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produt
                 produtos_loja.clear()
                 
         distancia = matriz_distancias[caminho[loja]][caminho[loja + 1]]
-        lista_rendimento_plotar.append(distancia / rendimento_combustivel)
-        lista_de_produtos.append(produtos_pegos.lista.copy())
+        lista_rendimento_plotar.append(distancia / rendimento_combustivel) #vai colocando o rendimento no grafico
+        lista_de_produtos.append(produtos_pegos.lista.copy()) #vai colocando os produtos no grafico
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
 
 def branchAndBound(filename, k_produtos_caminhao, isTriangulacao):
     lojas, lista_de_produtos = deliveryAnalyzer.load_stores(filename)
-    k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas)
+    k_valido = deliveryAnalyzer.pegarNumeroMaximoLojas(lojas) # o k, numero de itens do caminhao, nunca pode ser maior que o numero de lojas
     if int(k_produtos_caminhao) < k_valido or int(k_produtos_caminhao) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     matriz_distancias = deliveryAnalyzer.preCalcularMatrizDistancias(lojas)
-    if isTriangulacao:
+    if isTriangulacao: # flag que determina se vai ser usado o branch and bound normal ou com triangulação
         melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundTriangulacao(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
     else:
         melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundNormal(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
