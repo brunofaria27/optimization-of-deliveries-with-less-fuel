@@ -14,16 +14,13 @@ from models.List import ListaLimitada
 time_start_bruteforce = 0
 time_end_bruteforce = 0
 
-def calculaDistancia(xA, yA, xB, yB):
-    return math.sqrt((xA - xB)**2 + (yA - yB)**2)
-
 def verificaProdutosEntregues(lojas):
     for entregas_da_loja in lojas.values():
         if entregas_da_loja[2]:  # Verifica se a lista de entregas da loja não está vazia
             return False
     return True
 
-def permutacoesBruteForce(lojas, k_produtos):
+def permutacoesBruteForce(lojas, matriz_distancias, k_produtos):
     PERMUTACOES = 0
 
     lojas_filiais = list(lojas.keys())
@@ -40,7 +37,7 @@ def permutacoesBruteForce(lojas, k_produtos):
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
             PERMUTACOES += 1
-            itens_caminhao_volta_origem, lojas_copy, lista_rendimento_plotar, lista_itens_caminhao_teste_de_custo, caminho = calculaViagemTotalBruteForce(lojas, caminho, int(k_produtos))
+            itens_caminhao_volta_origem, lojas_copy, lista_rendimento_plotar, lista_itens_caminhao_teste_de_custo, caminho = calculaViagemTotalBruteForce(lojas, caminho, matriz_distancias, int(k_produtos))
             if itens_caminhao_volta_origem == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
                 if custo_viagem_atual < melhor_custo:
@@ -57,7 +54,7 @@ def permutacoesBruteForce(lojas, k_produtos):
     generate_permutations(lojas_filiais, [0])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES
 
-def calculaViagemTotalBruteForce(lojas, caminho, k_produtos):
+def calculaViagemTotalBruteForce(lojas, caminho, matriz_distancias, k_produtos):
     lista_rendimento_plotar = list()
     lista_de_produtos = list()
 
@@ -84,9 +81,7 @@ def calculaViagemTotalBruteForce(lojas, caminho, k_produtos):
                         rendimento -= 0.5
                 produtos_loja.clear()
                 
-        xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
-        xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
-        distancia = calculaDistancia(xA, yA, xB, yB)
+        distancia = matriz_distancias[caminho[loja]][caminho[loja + 1]]
         lista_rendimento_plotar.append(distancia / rendimento)
         lista_de_produtos.append(produtos_pegos.lista.copy())
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
@@ -97,7 +92,8 @@ def bruteForce(filename, k_produtos):
     if int(k_produtos) < k_valido or int(k_produtos) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
     time_start_bruteforce = time.time() # Inicio da execução brute force
-    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES = permutacoesBruteForce(lojas, int(k_produtos))
+    matriz_distancias = deliveryAnalyzer.preCalcularMatrizDistancias(lojas)
+    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES = permutacoesBruteForce(lojas, matriz_distancias, int(k_produtos))
     time_end_bruteforce = time.time() # Fim da execução brute force
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))

@@ -22,8 +22,14 @@ def isRamoValido(loja, produtos_caminhao, entregas):
             return False
     return True
 
-def calculaDistancia(xA, yA, xB, yB):
-    return math.sqrt((xA - xB)**2 + (yA - yB)**2)
+def destinoProdutoJaEntregue(loja_destino, lista_produtos):
+    return loja_destino in lista_produtos
+
+def temProdutosRestantes(lojas_copy, caminho_atual):
+    for loja in caminho_atual:
+        if loja != 0 and lojas_copy[loja][2]:
+            return True
+    return False
 
 def verificaProdutosEntregues(lojas):
     for entregas in lojas.values():
@@ -31,7 +37,7 @@ def verificaProdutosEntregues(lojas):
             return False
     return True
 
-def permutacoesBranchAndBound(lojas, entregas, k_produtos):
+def permutacoesBranchAndBound(lojas, entregas, matriz_distancias, k_produtos):
     PERMUTACOES = 0
     PODAS = 0
 
@@ -49,7 +55,7 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
         if len(lista_lojas) == 0:
             caminho = permutacao_atual + [0]
             PERMUTACOES += 1
-            qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, int(k_produtos))
+            qtd_caminhao, lojas_copy, lista_rendimento_plotar, produtos_caminhao, caminho = calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, int(k_produtos))
             if qtd_caminhao == 0 and verificaProdutosEntregues(lojas_copy):
                 custo_viagem_atual = sum(lista_rendimento_plotar)
                 if custo_viagem_atual < melhor_custo:
@@ -62,21 +68,19 @@ def permutacoesBranchAndBound(lojas, entregas, k_produtos):
         for i in range(len(lista_lojas)):
             loja_atual = lista_lojas[i]
             elementos_restantes = lista_lojas[:i] + lista_lojas[i + 1:]
-            _, _, lower_bound_atual, produtos_caminhao, _  = calculaViagemTotalBranchAndBound(lojas, permutacao_atual + [0], int(k_produtos))
-
+            _, _, rendimento_viagem, produtos_caminhao, _  = calculaViagemTotalBranchAndBound(lojas, permutacao_atual + [loja_atual], matriz_distancias, int(k_produtos))
+            lower_bound_atual = sum(rendimento_viagem)
             if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
-                if sum(lower_bound_atual) < melhor_custo:
+                if lower_bound_atual < melhor_custo:
                     generate_permutations(elementos_restantes, permutacao_atual + [loja_atual])
-                else:
-                    PODAS += 1
-            else:
-                PODAS += 1
+                else: PODAS += 1
+            else: PODAS += 1
     generate_permutations(lojas_filiais, [0])
     return melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS
 
-def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
-    lista_rendimento_plotar = list()
-    lista_de_produtos = list()
+def calculaViagemTotalBranchAndBound(lojas, caminho, matriz_distancias, k_produtos):
+    lista_rendimento_plotar = []
+    lista_de_produtos = []
 
     produtos_pegos = ListaLimitada(k_produtos)
     lojas_copy = copy.deepcopy(lojas)
@@ -84,7 +88,7 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
 
     for loja in range(len(caminho) - 1):
         if caminho[loja] != 0:
-            produtos_loja = lojas[caminho[loja]][2].copy()
+            produtos_loja = lojas_copy[caminho[loja]][2].copy()
 
             # Verificar se tem entrega
             if caminho[loja] in produtos_pegos.lista:
@@ -101,9 +105,7 @@ def calculaViagemTotalBranchAndBound(lojas, caminho, k_produtos):
                         rendimento -= 0.5
                 produtos_loja.clear()
                 
-        xA, yA = lojas[caminho[loja]][0], lojas[caminho[loja]][1]
-        xB, yB = lojas[caminho[loja + 1]][0], lojas[caminho[loja + 1]][1]
-        distancia = calculaDistancia(xA, yA, xB, yB)
+        distancia = matriz_distancias[caminho[loja]][caminho[loja + 1]]
         lista_rendimento_plotar.append(distancia / rendimento)
         lista_de_produtos.append(produtos_pegos.lista.copy())
     return len(produtos_pegos), lojas_copy, lista_rendimento_plotar, lista_de_produtos, caminho
@@ -114,7 +116,8 @@ def branchAndBound(filename, k_produtos):
     if int(k_produtos) < k_valido or int(k_produtos) >= 20:
         raise ValueError(f'Valor de K deve ser {k_valido} >= K < 20')
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
-    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBound(lojas, lista_de_produtos, int(k_produtos))
+    matriz_distancias = deliveryAnalyzer.preCalcularMatrizDistancias(lojas)
+    melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBound(lojas, lista_de_produtos, matriz_distancias, int(k_produtos))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound
     print("Melhor caminho: " + str(melhor_caminho))
     print("Custo total distância: " + str(sum(lista_melhor_custo)))
