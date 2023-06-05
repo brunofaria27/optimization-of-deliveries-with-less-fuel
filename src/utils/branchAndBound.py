@@ -1,3 +1,8 @@
+# Ciências da Computação - Projeto e Análise de Algoritmos
+# Bruno Faria - 742238
+# Lucas de Paula - 727840
+# Maria Luisa Raso - 698215
+
 # Bibliotecas do python
 import math
 import copy
@@ -28,7 +33,7 @@ def verificaProdutosEntregues(lojas):
             return False
     return True
 
-def permutacoesBranchAndBoundTriangulacao(lojas, entregas, matriz_distancias, k_produtos_caminhao):
+def permutacoesBranchAndBoundAlternativo(lojas, entregas, matriz_distancias, k_produtos_caminhao):
     PERMUTACOES = 0
     PODAS = 0
 
@@ -166,7 +171,7 @@ def branchAndBound(filename, k_produtos_caminhao, isTriangulacao):
     time_start_branch_and_bound = time.time() # Inicio da execução branch and bound
     matriz_distancias = deliveryAnalyzer.preCalcularMatrizDistancias(lojas)
     if isTriangulacao: # flag que determina se vai ser usado o branch and bound normal ou com triangulação
-        melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundTriangulacao(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
+        melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundAlternativo(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
     else:
         melhor_caminho, lista_melhor_custo, lista_itens_do_caminhao_total_caminho, PERMUTACOES, PODAS = permutacoesBranchAndBoundNormal(lojas, lista_de_produtos, matriz_distancias, int(k_produtos_caminhao))
     time_end_branch_and_bound = time.time() # Fim da execução branch and bound

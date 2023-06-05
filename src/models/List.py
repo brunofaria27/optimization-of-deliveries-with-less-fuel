@@ -1,3 +1,8 @@
+# Ciências da Computação - Projeto e Análise de Algoritmos
+# Bruno Faria - 742238
+# Lucas de Paula - 727840
+# Maria Luisa Raso - 698215
+
 class ListaLimitada:
     def __init__(self, tamanho_maximo):
         self.lista = []
