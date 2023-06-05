@@ -114,11 +114,9 @@ def permutacoesBranchAndBoundNormal(lojas, entregas, matriz_distancias, k_produt
             consumo_combustivel_atual, produtos_caminhao, produtos_plotar_novo = calculaViagemTotalBranchAndBound(lojas, produtos_pegos, permutacao_atual + [loja_atual], matriz_distancias, lista_de_rendimentos, lista_produtos_plotar)
             if consumo_combustivel_atual is not None: lower_bound_atual = sum(consumo_combustivel_atual)
             if consumo_combustivel_atual is not None and (melhor_caminho == None or melhor_custo > lower_bound_atual):
-                if isRamoValido(loja_atual, produtos_caminhao.lista, entregas):
+                if isRamoValido(loja_atual, produtos_caminhao[-1], entregas):
                     if lower_bound_atual < melhor_custo: #condicao de poda do branch and bound, usando lower bound
-                        generate_permutations(elementos_restantes, produtos_caminhao, permutacao_atual + [loja_atual], consumo_combustivel_atual, produtos_plotar_novo)
-                        consumo_combustivel_atual.pop()
-                        produtos_plotar_novo.pop()
+                        generate_permutations(lower_bound_atual, produtos_caminhao, elementos_restantes, permutacao_atual + [loja_atual], consumo_combustivel_atual, produtos_plotar_novo)
                     else: PODAS += 1 #se nao for melhor que o melhor custo, poda ele
                 else: PODAS += 1 #se nao e valido, poda ele
             else: PODAS += 1
@@ -146,7 +144,7 @@ def calculaViagemTotalBranchAndBound(lojas, produtos_pegos, caminho, matriz_dist
                 else: return None, None
             produtos_loja.clear()
     distancia = matriz_distancias[caminho[-2]][caminho[-1]]
-    lista_de_rendimentos.append(distancia / rendimento_combustivel) #vai colocando o rendimento no grafico
+    lista_de_rendimentos.append([distancia / rendimento_combustivel]) #vai colocando o rendimento no grafico
     lista_produtos_plotar.append([produtos_pegos.lista.copy()]) #vai colocando os produtos no grafico
     return lista_de_rendimentos, produtos_pegos, lista_produtos_plotar
 
